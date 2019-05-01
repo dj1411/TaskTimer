@@ -28,6 +28,8 @@ var timerTask = -1; /* return of setInterval() */
 var SelectedDate = moment();
 var SelectedTask = null;
 
+/* the main entry point. This is called after 'deviceready' event is received */
+/* keep the function at top for better readability */
 function main() {
     /* set some defaults */
     setStyle();
@@ -38,6 +40,9 @@ function main() {
     showTaskDivs();
     showTimers();
     resumeTimer();
+    
+    /* experimental features. enable during tests, but disable before release */
+    db.saveToFile();
 }
 
 function addTaskDiv(idTask) {
@@ -418,6 +423,7 @@ function resumeTimer() {
         } );
     } );
 }
+
 
 function setStyle() {
     /* set the app name and version */
