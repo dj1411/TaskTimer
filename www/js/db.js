@@ -128,12 +128,22 @@ DB.prototype.editTW = function(idxTask, idxTW, startTime, endTime, brk) {
 
 /* save entire database to file */
 DB.prototype.saveToFile = function () {
+    var content = new Blob([JSON.stringify(this.root)], {type: "text/plain"});
     /* go to the directory */
     window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
                                     function(dirEntry) {
         /* open the file */
         dirEntry.getFile("database.json", {create: true, exclusive: false}, function(fileEntry) {
-            alert("saveToFile");
+            
+            /* write contents to the file */
+            fileEntry.createWriter(function(fileWriter) {
+                fileWriter.onerror = function(err) {
+                    alert("error writing to file: " + e.toString());
+                };
+                
+                fileWriter.write(content);
+            });
+            
         }, function() {
             alert("Could not open file");
         });
