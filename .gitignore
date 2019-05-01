@@ -1,0 +1,8 @@
+/platforms/android/app/src
+/platforms/android/app/build/generated
+/platforms/android/app/build/intermediates
+/platforms/android/app/build/outputs
+/platforms/android/.gradle
+/platforms/android/CordovaLib/build
+
+/platforms/browser/www
