@@ -42,7 +42,8 @@ function main() {
     resumeTimer();
     
     /* experimental features. enable during tests, but disable before release */
-    db.saveToFile();
+//    db.saveToFile();
+    db.loadFromFile();
 }
 
 function addTaskDiv(idTask) {

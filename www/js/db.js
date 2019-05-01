@@ -26,6 +26,8 @@
 /* Nor is it meant to call any js api outside this file. */
 /* this is purely for setter apis */
 /* it is allowed to do some calculations */
+/* The apis here are not strictly sorted alphabetically. rather similar apis are 
+ * clubbed together whenevre possible */
 
 function TimeWindow(id) {
     /* inherited data from Signature */
@@ -128,17 +130,19 @@ DB.prototype.editTW = function(idxTask, idxTW, startTime, endTime, brk) {
 
 /* save entire database to file */
 DB.prototype.saveToFile = function () {
-    var content = new Blob([JSON.stringify(this.root)], {type: "text/plain"});
+    var content = new Blob([JSON.stringify(this.root)], {type: "text/json"});
+    
     /* go to the directory */
     window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
                                     function(dirEntry) {
         /* open the file */
-        dirEntry.getFile("database.json", {create: true, exclusive: false}, function(fileEntry) {
+        dirEntry.getFile("database.json", {create: true, exclusive: false}, 
+                         function(fileEntry) {
             
             /* write contents to the file */
             fileEntry.createWriter(function(fileWriter) {
                 fileWriter.onerror = function(err) {
-                    alert("error writing to file: " + e.toString());
+                    alert("error writing to file: " + err.toString());
                 };
                 
                 fileWriter.write(content);
@@ -147,6 +151,44 @@ DB.prototype.saveToFile = function () {
         }, function() {
             alert("Could not open file");
         });
+    }, function() {
+        alert("Could not open directory");
+    });
+}
+
+
+/* overwrite database with the contents of file */
+DB.prototype.loadFromFile = function () {
+    /* go to the directory */
+    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+                                    function(dirEntry) {
+        /* open the file */
+        dirEntry.getFile("database.json", {create: false, exclusive: false}, 
+                         function(fileEntry) {
+            
+            /* read the file into a json object */
+            fileEntry.file(function(file) {
+                var reader = new FileReader();
+                
+                reader.onerror = function(err) {
+                    alert("error reading from file: " + err.toString());
+                };
+                
+                reader.onloadend = function() {
+                    /* I would have really liked to avoid using db. */
+                    /* But could not find a way to write to 'this' with so
+                     * many nested anonymous callbacks */
+                    db.root = JSON.parse(this.result);
+                    db.save();
+                };
+                
+                reader.readAsText(file);
+            });
+            
+        }, function() {
+            alert("Could not open file");
+        });
+        
     }, function() {
         alert("Could not open directory");
     });
