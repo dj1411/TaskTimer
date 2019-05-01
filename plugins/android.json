@@ -9,6 +9,15 @@
   "installed_plugins": {
     "cordova-plugin-whitelist": {
       "PACKAGE_NAME": "com.debnath.tasktimer"
+    },
+    "cordova-plugin-nativeclicksound": {
+      "PACKAGE_NAME": "com.debnath.tasktimer"
+    },
+    "cordova-plugin-vibration": {
+      "PACKAGE_NAME": "com.debnath.tasktimer"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.debnath.tasktimer"
     }
   },
   "dependent_plugins": {}

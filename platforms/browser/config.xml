@@ -1,11 +1,11 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.debnath.tasktimer" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>TaskTimer</name>
+<widget id="com.debnath.tasktimer" version="0.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Task Timer</name>
     <description>
-        A sample Apache Cordova application that responds to the deviceready event.
+	Track how much time you are spending on your project
     </description>
-    <author email="dev@cordova.apache.org" href="http://cordova.io">
-        Apache Cordova Team
+    <author email="jayanta.dn@gmail.com" href="https://github.com/jayantadn/TaskTimer">
+	Jayanta Debnath
     </author>
     <content src="index.html" />
     <access origin="*" />
@@ -15,4 +15,5 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <icon src="www/img/launcher_icon/web_hi_res_512.png" />
 </widget>
