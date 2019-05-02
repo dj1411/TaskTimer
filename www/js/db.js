@@ -154,37 +154,41 @@ DB.prototype.editTW = function (idxTask, idxTW, startTime, endTime, brk) {
 DB.prototype.saveToFile = function () {
     "use strict";
 
-    var content = new Blob([JSON.stringify(this.root)], {
-        type: "text/json"
-    });
-
-    /* go to the directory */
-    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-        function (dirEntry) {
-            /* open the file */
-            dirEntry.getFile("database.json", {
-                create: true,
-                exclusive: false
-            },
-                function (fileEntry) {
-
-                    /* write contents to the file */
-                    fileEntry.createWriter(function (fileWriter) {
-                        fileWriter.onerror = function (err) {
-                            alert("error writing to file: " + err.toString());
-                        };
-
-                        fileWriter.write(content);
-                    });
-
-                },
-                function () {
-                    alert("Could not open file");
-                });
-        },
-        function () {
-            alert("Could not open directory");
+    /* This feature is available in Android only */
+    /* todo: in future extend to iOS also */
+    if (navigator.userAgent.indexOf("Android") >= 0) {
+        var content = new Blob([JSON.stringify(this.root)], {
+            type: "text/json"
         });
+
+        /* go to the directory */
+        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+            function (dirEntry) {
+                /* open the file */
+                dirEntry.getFile("database.json", {
+                    create: true,
+                    exclusive: false
+                },
+                    function (fileEntry) {
+
+                        /* write contents to the file */
+                        fileEntry.createWriter(function (fileWriter) {
+                            fileWriter.onerror = function (err) {
+                                alert("error writing to file: " + err.toString());
+                            };
+
+                            fileWriter.write(content);
+                        });
+
+                    },
+                    function () {
+                        alert("Could not open file");
+                    });
+            },
+            function () {
+                alert("Could not open directory");
+            });
+    }
 };
 
 
@@ -192,44 +196,49 @@ DB.prototype.saveToFile = function () {
 DB.prototype.loadFromFile = function () {
     "use strict";
 
-    /* go to the directory */
-    window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-        function (dirEntry) {
-            /* open the file */
-            dirEntry.getFile("database.json", {
-                create: false,
-                exclusive: false
-            },
-                function (fileEntry) {
+        /* This feature is available in Android only */
+    /* todo: in future extend to iOS also */
+    if (navigator.userAgent.indexOf("Android") >= 0) {
 
-                    /* read the file into a json object */
-                    fileEntry.file(function (file) {
-                        var reader = new FileReader();
+        /* go to the directory */
+        window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+            function (dirEntry) {
+                /* open the file */
+                dirEntry.getFile("database.json", {
+                    create: false,
+                    exclusive: false
+                },
+                    function (fileEntry) {
 
-                        reader.onerror = function (err) {
-                            alert("error reading from file: " + err.toString());
-                        };
+                        /* read the file into a json object */
+                        fileEntry.file(function (file) {
+                            var reader = new FileReader();
 
-                        reader.onloadend = function () {
-                            /* I would have really liked to avoid using db. */
-                            /* But could not find a way to write to 'this' with so
-                             * many nested anonymous callbacks */
-                            db.root = JSON.parse(this.result);
-                            db.save();
-                        };
+                            reader.onerror = function (err) {
+                                alert("error reading from file: " + err.toString());
+                            };
 
-                        reader.readAsText(file);
+                            reader.onloadend = function () {
+                                /* I would have really liked to avoid using db. */
+                                /* But could not find a way to write to 'this' with so
+                                 * many nested anonymous callbacks */
+                                db.root = JSON.parse(this.result);
+                                db.save();
+                            };
+
+                            reader.readAsText(file);
+                        });
+
+                    },
+                    function () {
+                        alert("Could not open file");
                     });
 
-                },
-                function () {
-                    alert("Could not open file");
-                });
-
-        },
-        function () {
-            alert("Could not open directory");
-        });
+            },
+            function () {
+                alert("Could not open directory");
+            });
+    }
 };
 
 

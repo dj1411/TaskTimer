@@ -62,6 +62,12 @@ function addTaskDiv(idTask) {
     /* find the array index */
     var idxTask = getIdxTask(idTask);
 
+    /* remove blank task for scroll fix */
+    var divTaskBlank = document.getElementById("divTask_blank");
+    if (divTaskBlank !== null) {
+        document.getElementById("divBody").removeChild(divTaskBlank);
+    }
+    
     /* create the div container */
     var divTask = document.createElement("div");
     document.getElementById("divBody").appendChild(divTask);
@@ -70,7 +76,6 @@ function addTaskDiv(idTask) {
     divTask.oncontextmenu = function (event) {
         onmenuTask(event, idTask);
     };
-    divTask.style.userSelect = "none";
 
     /* create the first row */
     var divHeader = document.createElement("div");
@@ -131,6 +136,14 @@ function addTaskDiv(idTask) {
     if (budgetHours !== null && budgetHours !== undefined && !isNaN(budgetHours) && budgetHours !== "" && budgetHours !== 0) {
         span.innerText = "Excess time: 0 hrs";
     }
+    
+    /* add an blank task to scroll past (+) button */
+    divTaskBlank = document.createElement("div");
+    divTaskBlank.id = "divTask_blank";
+    document.getElementById("divBody").appendChild(divTaskBlank);
+    divTaskBlank.classList.add("w3-container");
+    divTaskBlank.style.height = window.innerHeight -
+        document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";    
 }
 
 function getCoordModalEditTimer(idTask) {
@@ -525,6 +538,7 @@ function setStyle() {
     document.getElementById("divHeader").style.zIndex = Z_INDEX_MED;
     document.getElementById("overlayEditTimer").style.zIndex = Z_INDEX_MED;
     document.getElementById("modalEditTimer").style.zIndex = Z_INDEX_TOP;
+    document.getElementById("buttonAddTask").style.zIndex = Z_INDEX_TOP;
 
     /* move all contents below header bar */
     document.getElementById("divBody").style.top = document.getElementById("divHeader").clientHeight + 5 + "px";
