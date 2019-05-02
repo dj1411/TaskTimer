@@ -28,21 +28,30 @@ var timerTask = -1; /* return of setInterval() */
 var SelectedDate = moment();
 var SelectedTask = null;
 
+
+/* on Android start main only when 'deviceready' */
+/* todo: in future extend to iOS also */
+if(navigator.userAgent.indexOf("Android") >= 0) {
+    document.addEventListener( "deviceready", main );
+}
+else {
+    main();
+}
+
 /* the main entry point. This is called after 'deviceready' event is received */
 /* keep the function at top for better readability */
 function main() {
-    /* set some defaults */
-    setStyle();
-    
     /* removing dummy entries and display everything using js */
     document.getElementById("divBody").innerText = ""; 
     ssInit();
     showTaskDivs();
     showTimers();
     resumeTimer();
+    setStyle();
+    setEvents();
     
     /* experimental features. enable during tests, but disable before release */
-    db.saveToFile();
+//    db.saveToFile();
 //    db.loadFromFile();
 }
 
@@ -426,6 +435,31 @@ function resumeTimer() {
 }
 
 
+/* set global events */
+function setEvents() {
+    /* disable text selection and context menu */
+    document.body.style.userSelect = "none";
+    document.body.addEventListener("contextmenu", function(event) {
+        event.preventDefault();
+    });
+
+    /* use cordova plugins on android */
+    /* todo: in future extend to iOS also */
+    if(navigator.userAgent.indexOf("Android") >= 0) {
+        /* button click sound */
+        nativeclick.watch(["mybutton1"]);
+        
+        /* button click vibration */
+        var arrButtons = document.getElementsByClassName("mybutton1");
+        for( var i=0; i<arrButtons.length; i++) {
+            arrButtons[i].addEventListener( "click", function() {
+                navigator.vibrate(20);
+            } );
+        }
+    }      
+}
+
+
 function setStyle() {
     /* set the app name and version */
     document.title = APP_NAME;
@@ -438,22 +472,7 @@ function setStyle() {
     document.getElementById("modalEditTimer").style.zIndex = Z_INDEX_TOP;
     
     /* move all contents below header bar */
-    document.getElementById("divBody").style.top = document.getElementById("divHeader").clientHeight + 5 + "px";
-    
-    /* use cordova plugins on android */
-    /* todo: in future extend to iOS also */
-    if(navigator.userAgent.indexOf("Android") >= 0) {
-        /* button click sound */
-        nativeclick.watch(["mybutton1"]);
-        
-        /* button click vibration */
-        var arrButtons = document.getElementsByClassName("mybutton1");
-        for( var i=0; i<arrButtons.length; i++) {
-            arrButtons[i].addEventListener( "click", function() {
-                navigator.vibrate(10);
-            } );
-        }
-    }    
+    document.getElementById("divBody").style.top = document.getElementById("divHeader").clientHeight + 5 + "px";  
 }
 
 function showTaskDivs() {

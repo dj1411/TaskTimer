@@ -32,11 +32,11 @@
         
         <!-- add all CSS stylesheets -->
         <link rel="stylesheet" type="text/css" href="css/w3/w3.css" />
-        <link rel="stylesheet" type="text/css" href="css/w3/w3-theme-indigo.css" />
+        <link rel="stylesheet" type="text/css" href="css/w3/w3-theme-red.css" />
         <link rel="stylesheet" type="text/css" href="css/fontawesome-free-5.1.0-web/css/all.css" />
         <link rel="stylesheet" type="text/css" href="css/main.css" />
     </head>
-    <body onload="document.addEventListener( 'deviceready', main )">
+    <body>
         
         <!-- Header bar. Non scrollable -->
         <div id="divHeader" style="position: fixed; width: 100%">
@@ -55,31 +55,6 @@
         
         <!-- main body, scrollable area -->
         <div id="divBody" class="w3-text-theme" style="position: relative">
-            
-            <!-- dummy tasks
-            <div id="divTask_0" class="w3-card w3-container w3-round w3-theme-light w3-margin-left w3-margin-right w3-margin-bottom" oncontextmenu="onmenuTask(event, 0)" style="user-select: none">
-                <div class="w3-bar w3-large">
-                    <span class="w3-bar-item"><i class="fas fa-clipboard-check"></i></span>
-                    <span class="w3-bar-item">Parent task</span>
-                    <i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i>
-                    <span class="w3-bar-item w3-right" style="display: none"><i class="fas fa-pause"></i></span>
-                </div>
-                <div class="w3-xxlarge w3-center"><label id="divTimer_0" onclick="onclickEditTimer(event)">00:00:00</label></div>
-            </div>
-            
-            <div id="divTask_1" class="w3-card w3-container w3-round w3-theme-light w3-margin-left w3-margin-right w3-margin-bottom" oncontextmenu="onmenuTask(event, 1)" style="user-select: none">
-                <div class="w3-bar w3-large">
-                    <span class="w3-bar-item"><i class="fas fa-clipboard-check"></i></span>
-                    <span class="w3-bar-item">Parent task2</span>
-                    <i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i>                    
-                    <span class="w3-bar-item w3-right" style="display: none"><i class="fas fa-pause"></i></span>
-                </div>
-                <div class="w3-xxlarge w3-center"><label id="divTimer_1" onclick="onclickEditTimer(event)">00:00:00</label></div>
-                <div class="w3-cell-row w3-small">
-                </div>
-            </div>
-            -->
-            
         </div>
         
         <!-- add/edit task modal -->
@@ -92,7 +67,7 @@
                     </div>
                     
                     <div class="w3-container">
-                        <label><b>Task name</b></label>
+                        <label class="w3-text-black"><b>Task name</b></label>
                         <input type="text" id="textTaskName" class="w3-input w3-border w3-margin-bottom" required />
                     </div>
 
