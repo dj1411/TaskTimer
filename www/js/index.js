@@ -216,8 +216,6 @@ function hideModalEditTimer() {
     document.getElementById("modalEditTimer").style.display = "none";
     document.getElementById("overlayEditTimer").style.display = "none";
     document.getElementById("divTimer_" + SelectedTask).classList.remove("w3-theme-l3");
-    
-    ssReset("SelectedTask");
 }
 
 function oncancelAddEditTask(event) {
@@ -230,6 +228,13 @@ function oncancelAddEditTask(event) {
 
 function oncancelEditTimer(event) {
     hideModalEditTimer();
+    ssReset("SelectedTask");
+
+    /* reset colors due to validation error */
+    document.getElementById("textStartTime").classList.add("w3-theme-light");
+    document.getElementById("textEndTime"  ).classList.add("w3-theme-light");
+    document.getElementById("textStartTime").classList.remove("w3-text-red");
+    document.getElementById("textEndTime"  ).classList.remove("w3-text-red");
 }
 
 function onclickAddTask() {
