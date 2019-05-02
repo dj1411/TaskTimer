@@ -51,7 +51,7 @@ function main() {
     setStyle();
     setEvents();
 
-    /* experimental features. enable during tests, but disable before release */
+    /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
     db.saveToFile();
 //    db.loadFromFile();
 }
@@ -402,7 +402,8 @@ function onsubmitAddEditTask() {
 function onsubmitEditTimer() {
     "use strict";
 
-    var start = end = null;
+    var start = null;
+    var end = null;
     var brk = 0;
 
     start = moment(moment(SelectedDate).format("YYYY-MM-DD ") +
