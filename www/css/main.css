@@ -1,4 +1,4 @@
 /* button which will darken the background on click */
-.mybutton1:active {
+.mybutton:active {
     background-color: #b1b8e3;
 }

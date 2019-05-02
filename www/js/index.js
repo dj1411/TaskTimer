@@ -89,7 +89,7 @@ function addTaskDiv(idTask) {
     /* play button */
     icon = document.createElement("i");
     divHeader.appendChild(icon);
-    icon.classList.add("w3-bar-item", "w3-right", "mybutton1");
+    icon.classList.add("w3-bar-item", "w3-right", "mybutton");
     icon.classList.add("fas", "fa-play");
     icon.onclick = onclickStartTimer;
     icon.id = "buttonPlay_" + idTask;
@@ -97,7 +97,7 @@ function addTaskDiv(idTask) {
     /* pause button */
     icon = document.createElement("i");
     divHeader.appendChild(icon);
-    icon.classList.add("w3-bar-item", "w3-right", "mybutton1");
+    icon.classList.add("w3-bar-item", "w3-right", "mybutton");
     icon.classList.add("fas", "fa-pause");
     icon.id = "buttonPause_" + idTask;
     icon.style.display = "none";
@@ -447,10 +447,10 @@ function setEvents() {
     /* todo: in future extend to iOS also */
     if(navigator.userAgent.indexOf("Android") >= 0) {
         /* button click sound */
-        nativeclick.watch(["mybutton1"]);
+        nativeclick.watch(["mybutton"]);
         
         /* button click vibration */
-        var arrButtons = document.getElementsByClassName("mybutton1");
+        var arrButtons = document.getElementsByClassName("mybutton");
         for( var i=0; i<arrButtons.length; i++) {
             arrButtons[i].addEventListener( "click", function() {
                 navigator.vibrate(20);

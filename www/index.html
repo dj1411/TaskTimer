@@ -42,14 +42,14 @@
         <div id="divHeader" style="position: fixed; width: 100%">
             <div id="titleWindow" class="w3-theme-action w3-xlarge w3-padding">Title</div>
             <div id="divPagination" class="w3-cell-row w3-center w3-padding" style="background: white">
-                <span id="buttonPrev" onclick="changeDate(-1, 'day')" class="mybutton1 w3-cell">&laquo;</span>
-                <span id="buttonToday" onclick="onclickToday()" class="mybutton1 w3-cell" style="width: 60%">Today</span>
-                <span id="buttonNext" onclick="changeDate(1, 'day')" class="mybutton1 w3-cell">&raquo;</span>
+                <span id="buttonPrev" onclick="changeDate(-1, 'day')" class="mybutton w3-cell">&laquo;</span>
+                <span id="buttonToday" onclick="onclickToday()" class="mybutton w3-cell" style="width: 60%">Today</span>
+                <span id="buttonNext" onclick="changeDate(1, 'day')" class="mybutton w3-cell">&raquo;</span>
             </div>
         </div>    
         
         <!-- floating (+) button -->
-        <button id="buttonAddTask" class="w3-button mybutton1 w3-xlarge w3-circle w3-theme-action w3-card-4" onclick="onclickAddTask()" style="position: fixed; right: 16px; bottom: 16px">
+        <button id="buttonAddTask" class="w3-button mybutton w3-xlarge w3-circle w3-theme-action w3-card-4" onclick="onclickAddTask()" style="position: fixed; right: 16px; bottom: 16px">
             <i class="fa fa-plus"></i>
         </button>
         
@@ -72,8 +72,8 @@
                     </div>
 
                     <div class="w3-bar w3-padding">
-                        <input id="buttonCancelAddEditTask" type="button" class="w3-button mybutton1 w3-ripple w3-theme-action w3-left" style="width:45%" onclick="oncancelAddEditTask(event)" value="Cancel" />
-                        <input type="submit" class="w3-button mybutton1 w3-ripple w3-theme-action w3-right" style="width:45%" value="Save" />
+                        <input id="buttonCancelAddEditTask" type="button" class="w3-button mybutton w3-ripple w3-theme-action w3-left" style="width:45%" onclick="oncancelAddEditTask(event)" value="Cancel" />
+                        <input type="submit" class="w3-button mybutton w3-ripple w3-theme-action w3-right" style="width:45%" value="Save" />
                     </div>
                     
                 </div>
@@ -99,8 +99,8 @@
                 </table>
                 
                 <div class="w3-bar w3-margin-top">
-                    <input id="buttonCancelEditTimer" type="button" class="w3-button mybutton1 w3-ripple w3-theme-action w3-left" style="width:45%" onclick="oncancelEditTimer(event)" value="Cancel" />
-                    <input type="submit" class="w3-button mybutton1 w3-ripple w3-theme-action w3-right" style="width:45%" value="Save" />
+                    <input id="buttonCancelEditTimer" type="button" class="w3-button mybutton w3-ripple w3-theme-action w3-left" style="width:45%" onclick="oncancelEditTimer(event)" value="Cancel" />
+                    <input type="submit" class="w3-button mybutton w3-ripple w3-theme-action w3-right" style="width:45%" value="Save" />
                 </div>
             </div>
             <div id="overlayEditTimer" onclick="oncancelEditTimer(event)" style="position: fixed; width: 100%; height: 100%; left: 0; top: 0; display: none"></div>
