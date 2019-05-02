@@ -1,4 +1,5 @@
 - update version number in const.js and config.xml
 - remove package.json to rebuild it.
-- cordova build android and keep it for attaching as GitHub release
+- cordova build android 
+- keep the apk for attaching as GitHub release
 - github create release
