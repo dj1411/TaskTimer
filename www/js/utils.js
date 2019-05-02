@@ -24,13 +24,14 @@
 
 /* This will return true if the date is same, irrespective of time */
 function isDateMatching(date1, date2) {
-   if(  moment(date1).date()  == moment(date2).date() &&
-        moment(date1).month() == moment(date2).month() &&
-        moment(date1).year()  == moment(date2).year()
-     ) {
-       return true;
-   }
-   else {
-      return false;
-   }
+    "use strict";
+
+    if (moment(date1).date() === moment(date2).date() &&
+            moment(date1).month() === moment(date2).month() &&
+            moment(date1).year() === moment(date2).year()
+            ) {
+        return true;
+    } else {
+        return false;
+    }
 }

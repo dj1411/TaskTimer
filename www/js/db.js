@@ -30,6 +30,8 @@
  * clubbed together whenevre possible */
 
 function TimeWindow(id) {
+    "use strict";
+
     /* inherited data from Signature */
     this.id = id;
 
@@ -40,173 +42,212 @@ function TimeWindow(id) {
 }
 
 function ParentTask(id) {
+    "use strict";
+
     /* inherited data from Signature */
     this.id = id;
 
     /* inherit data from Task*/
     this.name = null;
-    this.arrTimeWindow = new Array();
+    this.arrTimeWindow = [];
 }
 
 function Data() {
+    "use strict";
+
     /* inherited data from Signature */
     this.id = null;
-    
+
     /* own data */
-    this.arrTasks = new Array();
+    this.arrTasks = [];
 }
 
 function DB() {
-    this.root = new Object();
+    "use strict";
+
+    this.root = {};
     this.load();
-    
-    if(this.root.data == undefined || this.root.data == null || this.root.data === "") {
+
+    if (this.root.data === undefined || this.root.data === null || this.root.data === "") {
         this.root.data = new Data();
         this.save();
     }
 }
 
-DB.prototype.addStartTime = function(idxTask) {
+DB.prototype.addStartTime = function (idxTask) {
+    "use strict";
+
     var tw = new TimeWindow(this.root.data.arrTasks[idxTask].arrTimeWindow.length);
     tw.startTime = moment();
     this.root.data.arrTasks[idxTask].arrTimeWindow.push(tw);
     this.save();
-}
+};
 
-DB.prototype.addPauseTime = function(idxTask) {
+DB.prototype.addPauseTime = function (idxTask) {
+    "use strict";
+
     /* find the running timer */
-    var idxTW = this.root.data.arrTasks[idxTask].arrTimeWindow.findIndex( function(tw) {
-        return (tw.startTime != null && tw.endTime == null);
-    } );
+    var idxTW = this.root.data.arrTasks[idxTask].arrTimeWindow.findIndex(function (tw) {
+        return (tw.startTime !== null && tw.endTime === null);
+    });
 
     /* add end time */
     var arrTW = this.root.data.arrTasks[idxTask].arrTimeWindow;
-    
-    if( isDateMatching( arrTW[idxTW].startTime, moment() ) ) {
-        arrTW[idxTW].endTime = moment(); 
-    }
-    else {
+
+    if (isDateMatching(arrTW[idxTW].startTime, moment())) {
+        arrTW[idxTW].endTime = moment();
+    } else {
         var lastMoment = moment(arrTW[idxTW].startTime);
-        lastMoment.set( { 'hour': 23, 'minute': 59, 'second': 59, 'millisecond': 999 } );
+        lastMoment.set({
+            'hour': 23,
+            'minute': 59,
+            'second': 59,
+            'millisecond': 999
+        });
         arrTW[idxTW].endTime = lastMoment;
     }
-    
-    this.save();
-}
 
-DB.prototype.addTask = function() {
+    this.save();
+};
+
+DB.prototype.addTask = function () {
+    "use strict";
+
     var task = new ParentTask(this.root.data.arrTasks.length);
-    
+
     /* members inherited from Task */
     task.name = document.getElementById("textTaskName").value;
-    
+
     /* own members */
-    
+
     /* save */
     document.getElementById("modalAddEditTask").style.display = "none";
     this.root.data.arrTasks.push(task);
     this.save();
-    
+
     /* show the new task */
     addTaskDiv(task.id); // todo move this call to onsubmitAddEditTask(). this file should only modify the DB
-}
+};
 
-DB.prototype.addTW = function(idxTask, startTime, endTime, brk) {
+DB.prototype.addTW = function (idxTask, startTime, endTime, brk) {
+    "use strict";
+
     var tw = new TimeWindow(this.root.data.arrTasks[idxTask].arrTimeWindow.length);
     tw.startTime = startTime;
     tw.endTime = endTime;
     tw.breakdur = brk;
     this.root.data.arrTasks[idxTask].arrTimeWindow.push(tw);
-    this.save();    
-}
+    this.save();
+};
 
-DB.prototype.editTW = function(idxTask, idxTW, startTime, endTime, brk) {
+DB.prototype.editTW = function (idxTask, idxTW, startTime, endTime, brk) {
+    "use strict";
+
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].startTime = startTime;
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].endTime = endTime;
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].breakdur = brk;
     this.save();
-}
+};
 
 
 /* save entire database to file */
 DB.prototype.saveToFile = function () {
-    var content = new Blob([JSON.stringify(this.root)], {type: "text/json"});
-    
+    "use strict";
+
+    var content = new Blob([JSON.stringify(this.root)], {
+        type: "text/json"
+    });
+
     /* go to the directory */
     window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-                                    function(dirEntry) {
-        /* open the file */
-        dirEntry.getFile("database.json", {create: true, exclusive: false}, 
-                         function(fileEntry) {
-            
-            /* write contents to the file */
-            fileEntry.createWriter(function(fileWriter) {
-                fileWriter.onerror = function(err) {
-                    alert("error writing to file: " + err.toString());
-                };
-                
-                fileWriter.write(content);
-            });
-            
-        }, function() {
-            alert("Could not open file");
+        function (dirEntry) {
+            /* open the file */
+            dirEntry.getFile("database.json", {
+                create: true,
+                exclusive: false
+            },
+                function (fileEntry) {
+
+                    /* write contents to the file */
+                    fileEntry.createWriter(function (fileWriter) {
+                        fileWriter.onerror = function (err) {
+                            alert("error writing to file: " + err.toString());
+                        };
+
+                        fileWriter.write(content);
+                    });
+
+                },
+                function () {
+                    alert("Could not open file");
+                });
+        },
+        function () {
+            alert("Could not open directory");
         });
-    }, function() {
-        alert("Could not open directory");
-    });
-}
+};
 
 
 /* overwrite database with the contents of file */
 DB.prototype.loadFromFile = function () {
+    "use strict";
+
     /* go to the directory */
     window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-                                    function(dirEntry) {
-        /* open the file */
-        dirEntry.getFile("database.json", {create: false, exclusive: false}, 
-                         function(fileEntry) {
-            
-            /* read the file into a json object */
-            fileEntry.file(function(file) {
-                var reader = new FileReader();
-                
-                reader.onerror = function(err) {
-                    alert("error reading from file: " + err.toString());
-                };
-                
-                reader.onloadend = function() {
-                    /* I would have really liked to avoid using db. */
-                    /* But could not find a way to write to 'this' with so
-                     * many nested anonymous callbacks */
-                    db.root = JSON.parse(this.result);
-                    db.save();
-                };
-                
-                reader.readAsText(file);
-            });
-            
-        }, function() {
-            alert("Could not open file");
+        function (dirEntry) {
+            /* open the file */
+            dirEntry.getFile("database.json", {
+                create: false,
+                exclusive: false
+            },
+                function (fileEntry) {
+
+                    /* read the file into a json object */
+                    fileEntry.file(function (file) {
+                        var reader = new FileReader();
+
+                        reader.onerror = function (err) {
+                            alert("error reading from file: " + err.toString());
+                        };
+
+                        reader.onloadend = function () {
+                            /* I would have really liked to avoid using db. */
+                            /* But could not find a way to write to 'this' with so
+                             * many nested anonymous callbacks */
+                            db.root = JSON.parse(this.result);
+                            db.save();
+                        };
+
+                        reader.readAsText(file);
+                    });
+
+                },
+                function () {
+                    alert("Could not open file");
+                });
+
+        },
+        function () {
+            alert("Could not open directory");
         });
-        
-    }, function() {
-        alert("Could not open directory");
-    });
-}
+};
 
 
 /* load the database from local storage */
 /* do not reorder this function */
 DB.prototype.load = function () {
+    "use strict";
+
     var d = localStorage.getItem("db" + APP_NAME);
-    if (d != null && d != undefined) {
+    if (d !== null && d !== undefined) {
         this.root = JSON.parse(d);
     }
-}
+};
 
 /* save the database to local storage */
 /* do not reorder this function */
 DB.prototype.save = function () {
-    localStorage.setItem("db" + APP_NAME, JSON.stringify(this.root));
-}
+    "use strict";
 
+    localStorage.setItem("db" + APP_NAME, JSON.stringify(this.root));
+};
