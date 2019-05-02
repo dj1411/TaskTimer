@@ -30,7 +30,7 @@ var ss = {};
 function ssInit() {
     "use strict";
     
-    var s = sessionStorage.getItem("ssTimeTracker");
+    var s = sessionStorage.getItem("ss" + APP_NAME);
     if (s !== null && s !== undefined) {
         ss = JSON.parse(s);
     }

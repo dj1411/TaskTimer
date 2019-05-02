@@ -1,0 +1,1 @@
+https://romannurik.github.io/AndroidAssetStudio/icons-launcher.html#foreground.type=clipart&foreground.clipart=alarm&foreground.space.trim=1&foreground.space.pad=0.1&foreColor=rgb(76%2C%20175%2C%2080)&backColor=rgb(141%2C%2016%2C%207)&crop=0&backgroundShape=square&effects=elevate&name=ic_launcher

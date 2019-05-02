@@ -477,6 +477,7 @@ function resumeTimer() {
     db.root.data.arrTasks.forEach(function (task) {
         task.arrTimeWindow.forEach(function (tw) {
             if (null !== tw.startTime && null === tw.endTime) {
+                updateRunningTimer();
                 timerTask = setInterval(updateRunningTimer, 1000);
                 return;
             }
