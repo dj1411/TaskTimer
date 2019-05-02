@@ -52,8 +52,8 @@ function main() {
     setEvents();
 
     /* experimental features. enable during tests, but disable before release */
-    //    db.saveToFile();
-    //    db.loadFromFile();
+    db.saveToFile();
+//    db.loadFromFile();
 }
 
 function addTaskDiv(idTask) {
