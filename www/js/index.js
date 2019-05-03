@@ -247,6 +247,36 @@ function hideModalEditTimer() {
     document.getElementById("divTimer_" + SelectedTask).classList.remove("w3-theme-l3");
 }
 
+
+/* handle back button for Android */
+function onBack() {
+    /* close any open modal */
+    var modals = document.getElementsByClassName("w3-modal");
+    for(var i=0; i<modals.length; i++) {
+        if(modals[i].style.display === "block") {
+            modals[i].style.display = "none";
+            return;
+        }
+    }
+    
+    /* todo: deselect task if any */
+//    if(ssGet("idHabitSelect") != undefined) {
+//        deselectHabit();
+//        return;
+//    }
+    
+    /* if not on main page, just go back to previous page */
+    var page = location.href.split('/').reverse()[0];
+    if (page != "index.html" && page != "index.html?") {
+        window.history.back();
+    }
+    /* else if on main page, exit app */
+    else {
+        navigator.app.exitApp();
+    }
+}
+
+
 function oncancelAddEditTask(event) {
     "use strict";
 
@@ -523,6 +553,9 @@ function setEvents() {
                 navigator.vibrate(20);
             });
         }
+        
+        /* back button */
+        document.addEventListener("backbutton", onBack);
     }
 }
 
