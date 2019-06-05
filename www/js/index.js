@@ -42,6 +42,10 @@ if (navigator.userAgent.indexOf("Android") >= 0) {
 function main() {
     "use strict";
 
+    /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
+    db.saveToFile();
+    // db.loadFromFile();
+
     /* removing dummy entries and display everything using js */
     document.getElementById("divBody").innerText = "";
     ssInit();
@@ -50,10 +54,6 @@ function main() {
     resumeTimer();
     setStyle();
     setEvents();
-
-    /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
-    db.saveToFile();
-//    db.loadFromFile();
 }
 
 function addTaskDiv(idTask) {
