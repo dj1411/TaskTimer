@@ -7,6 +7,14 @@
     "is_top_level": true,
     "variables": {}
   },
+  "cordova-plugin-file": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-file@6.0.1"
+    },
+    "is_top_level": true,
+    "variables": {}
+  },
   "cordova-plugin-nativeclicksound": {
     "source": {
       "type": "registry",
@@ -19,14 +27,6 @@
     "source": {
       "type": "registry",
       "id": "cordova-plugin-vibration"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "cordova-plugin-file": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-file@6.0.1"
     },
     "is_top_level": true,
     "variables": {}

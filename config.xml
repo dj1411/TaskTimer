@@ -2,7 +2,7 @@
 <widget id="com.debnath.tasktimer" version="0.0.3" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Task Timer</name>
     <description>
-	Track how much time you are spending on your project
+	Track time spent on your tasks
     </description>
     <author email="jayanta.dn@gmail.com" href="https://github.com/jayantadn/TaskTimer">
 	Jayanta Debnath
