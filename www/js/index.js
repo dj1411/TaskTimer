@@ -43,8 +43,8 @@ function main() {
     "use strict";
 
     /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
-    db.saveToFile();
-    // db.loadFromFile();
+//    db.saveToFile();
+    db.loadFromFile();
 
     /* removing dummy entries and display everything using js */
     document.getElementById("divBody").innerText = "";
@@ -473,7 +473,7 @@ function onsubmitEditTimer() {
     }
 
     /* if validation success save updated data and hide the modal */
-    var idxTask = SelectedTask;
+    var idxTask = getIdxTask(SelectedTask);
 
     /* find the last time window */
     var arrTW = db.root.data.arrTasks[idxTask].arrTimeWindow;
