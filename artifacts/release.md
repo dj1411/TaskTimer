@@ -1,5 +1,6 @@
 - update version number in const.js and config.xml
 - remove package.json to rebuild it.
+- during init save the database to local json file
 - cordova build android 
 - keep the apk for attaching as GitHub release
 - github create release
