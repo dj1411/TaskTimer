@@ -43,8 +43,8 @@ function main() {
     "use strict";
 
     /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
-//    db.saveToFile();
-    db.loadFromFile();
+    db.saveToFile();
+//    db.loadFromFile();
 
     /* removing dummy entries and display everything using js */
     document.getElementById("divBody").innerText = "";
@@ -492,7 +492,7 @@ function onsubmitEditTimer() {
 
     db.editTW(idxTask, idxTW, start, end, brk);
 
-    updateTimer(SelectedTask);
+    updateTimer(getIdxTask(SelectedTask));
     hideModalEditTimer();
 }
 
