@@ -167,7 +167,7 @@ DB.prototype.addTask = function (name, idPTask) {
         this.root.data.arrTasks.push(task);
     }
     else {
-//        console.log( this.root.data.arrTasks[idPTask] );
+        this.root.data.arrTasks[idPTask].addChildTask( name );
     }
     
     this.save();
@@ -300,6 +300,9 @@ DB.prototype.load = function () {
     var d = localStorage.getItem(getStorName("db"));
     if (d !== null && d !== undefined) {
         this.root = JSON.parse(d);
+        this.root.data.arrTasks.forEach( function(task) {
+            Object.setPrototypeOf( task, ParentTask.prototype );
+        } );
     }
 };
 
