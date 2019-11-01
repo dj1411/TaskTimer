@@ -56,6 +56,9 @@ function main() {
     setEvents();
 }
 
+
+/* This function is called while adding a new task */
+/* Also when initially loading the app */
 function addTaskDiv(idTask) {
     "use strict";
 
@@ -423,10 +426,24 @@ function onmenuTask(event, idTask) {
     //    document.getElementById("divTask_" + idTask).classList.add("w3-theme-l3");
 }
 
+/* right now its only add task. edit will come later */
 function onsubmitAddEditTask() {
     "use strict";
 
-    db.addTask();
+    /* find the next available idTask */
+    var idTask = 0;
+    while (!db.root.data.arrTasks.every(function (task) {
+            return (task.id !== idTask);
+        })) {
+        idTask += 1;
+    }
+    
+    /* add to database */
+    db.addTask(idTask, document.getElementById("textTaskName").value);
+    
+    /* take care of the UI */
+    document.getElementById("modalAddEditTask").style.display = "none";
+    addTaskDiv(idTask);
 }
 
 function onsubmitEditTimer() {

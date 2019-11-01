@@ -29,6 +29,7 @@
 /* The apis here are not strictly sorted alphabetically. rather similar apis are 
  * clubbed together whenevre possible */
 
+
 function TimeWindow(id) {
     "use strict";
 
@@ -41,16 +42,18 @@ function TimeWindow(id) {
     this.breakdur = moment.duration(0);
 }
 
-function ParentTask(id) {
+
+function ParentTask(idTask) {
     "use strict";
 
     /* inherited data from Signature */
-    this.id = id;
+    this.id = idTask;
 
     /* inherit data from Task*/
     this.name = null;
     this.arrTimeWindow = [];
 }
+
 
 function Data() {
     "use strict";
@@ -61,6 +64,7 @@ function Data() {
     /* own data */
     this.arrTasks = [];
 }
+
 
 function DB() {
     "use strict";
@@ -74,6 +78,7 @@ function DB() {
     }
 }
 
+
 DB.prototype.addStartTime = function (idxTask) {
     "use strict";
 
@@ -82,6 +87,7 @@ DB.prototype.addStartTime = function (idxTask) {
     this.root.data.arrTasks[idxTask].arrTimeWindow.push(tw);
     this.save();
 };
+
 
 DB.prototype.addPauseTime = function (idxTask) {
     "use strict";
@@ -110,24 +116,19 @@ DB.prototype.addPauseTime = function (idxTask) {
     this.save();
 };
 
-DB.prototype.addTask = function () {
+
+DB.prototype.addTask = function (idTask, name) {
     "use strict";
 
-    var task = new ParentTask(this.root.data.arrTasks.length);
-
-    /* members inherited from Task */
-    task.name = document.getElementById("textTaskName").value;
-
-    /* own members */
+    /* filling the data structure */
+    var task = new ParentTask(idTask);
+    task.name = name;
 
     /* save */
-    document.getElementById("modalAddEditTask").style.display = "none";
     this.root.data.arrTasks.push(task);
     this.save();
-
-    /* show the new task */
-    addTaskDiv(task.id); // todo move this call to onsubmitAddEditTask(). this file should only modify the DB
 };
+
 
 DB.prototype.addTW = function (idxTask, startTime, endTime, brk) {
     "use strict";
@@ -139,6 +140,7 @@ DB.prototype.addTW = function (idxTask, startTime, endTime, brk) {
     this.root.data.arrTasks[idxTask].arrTimeWindow.push(tw);
     this.save();
 };
+
 
 DB.prototype.editTW = function (idxTask, idxTW, startTime, endTime, brk) {
     "use strict";
@@ -252,6 +254,7 @@ DB.prototype.load = function () {
         this.root = JSON.parse(d);
     }
 };
+
 
 /* save the database to local storage */
 /* do not reorder this function */
