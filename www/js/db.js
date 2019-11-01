@@ -29,6 +29,9 @@
 /* The apis here are not strictly sorted alphabetically. rather similar apis are 
  * clubbed together whenevre possible */
 
+/* store the current instance of db. */
+/* so that db methods can be called from lower objects also */
+var base = null;
 
 function TimeWindow(id) {
     "use strict";
@@ -72,16 +75,13 @@ function ParentTask(idTask, name) {
 
 ParentTask.prototype.addChildTask = function(name) {
     /* find the next available id for ChildTask */
-    var idCTask = 0;
-    while (!this.arrChildTasks.every(function (ctask) {
-            return (ctask.id !== idCTask);
-        })) {
-        idCTask += 1;
-    }
-    
+    var idCTask = base.getNextIdTask();
+
     /* create a child taks with the given name and add to the array */
     var child = new ChildTask( idCTask, name );
     this.arrChildTasks.push( child );
+    
+    return idCTask;
 }
 
 function Data() {
@@ -98,13 +98,18 @@ function Data() {
 function DB() {
     "use strict";
 
+    /* define the object and load from local storage */
     this.root = {};
     this.load();
 
+    /* if local storage is empty, initialize to default */
     if (this.root.data === undefined || this.root.data === null || this.root.data === "") {
         this.root.data = new Data();
         this.save();
     }
+    
+    /* enable any object to access any part of db */
+    base = this;
 }
 
 
@@ -151,23 +156,19 @@ DB.prototype.addPauseTime = function (idTask) {
 DB.prototype.addTask = function (name, idPTask) {
     "use strict";
 
+    /* for returning sake */
+    var idTask = null;
+    
     /* If no parent, then create a parent task. */
     /* Otherwise, create a child task and append to parent. */
     if(idPTask == undefined || idPTask == null) {
-        /* find the next available idTask */
-        var idTask = 0;
-        while (!this.root.data.arrTasks.every(function (task) {
-                return (task.id !== idTask);
-            })) {
-            idTask += 1;
-        }
-
         /* filling the data structure */
+        idTask = base.getNextIdTask();
         var task = new ParentTask(idTask, name);
         this.root.data.arrTasks.push(task);
     }
     else {
-        this.root.data.arrTasks[idPTask].addChildTask( name );
+        idTask = this.root.data.arrTasks[idPTask].addChildTask( name );
     }
     
     this.save();
@@ -198,6 +199,32 @@ DB.prototype.editTW = function (idTask, idTW, startTime, endTime, brk) {
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].breakdur = brk;
     this.save();
 };
+
+
+/* get the next available idTask. */
+/* This will be unique across all parent as well as child tasks */
+DB.prototype.getNextIdTask = function () {
+    /* create a long array of all the idTask currently existing */
+    var arrIds = [];
+    this.root.data.arrTasks.forEach( function(task) {
+        arrIds.push(task.id);
+        
+        if(task.arrChildTasks != undefined) {
+            task.arrChildTasks.forEach( function(ctask) {
+                arrIds.push(ctask.id);
+            });
+        }
+    } );
+    
+    /* get the next available id, the usual way */
+    var idTask = 0;
+    while (!arrIds.every(function (id) {
+            return (id !== idTask);
+        })) {
+        idTask += 1;
+    }    
+    return idTask;
+}
 
 
 /* save entire database to file */

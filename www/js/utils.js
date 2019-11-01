@@ -22,6 +22,8 @@
  * SOFTWARE.
  *******************************************************************************/
 
+/* These are utilities which can be made common accross all projects */
+
 /* This will return true if the date is same, irrespective of time */
 function isDateMatching(date1, date2) {
     "use strict";
