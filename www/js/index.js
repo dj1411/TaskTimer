@@ -394,9 +394,9 @@ function onclickStartTimer(event) {
     var idxTask = getIdxTask(idTask);
 
     /* find any running timer and pause it */
-    var idxTaskRunning = getIdxTaskRunning();
-    if (-1 !== idxTaskRunning) {
-        pauseTimer(idxTaskRunning);
+    var idTaskRunning = db.root.data.arrTasks[getIdxTaskRunning()].id;
+    if (-1 !== idTaskRunning) {
+        pauseTimer(idTaskRunning);
     }
 
     startTimer(idxTask);
@@ -651,7 +651,7 @@ function startTimer(idxTask) {
     var idTask = db.root.data.arrTasks[idxTask].id;
 
     /* add start time to database */
-    db.addStartTime(idxTask);
+    db.addStartTime(idTask);
 
     /* schedule a periodic function to update the timer */
     timerTask = setInterval(updateRunningTimer, 1000);
