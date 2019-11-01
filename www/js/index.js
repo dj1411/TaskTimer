@@ -150,6 +150,30 @@ function addTaskDiv(idTask) {
 }
 
 
+/* used for displaying data for a different date */
+/* period argument is added for scalability */
+function changeDate(offset, period) {
+    "use strict";
+
+    switch (period) {
+        case "day":
+            var dat = moment(SelectedDate);
+            dat.add(offset, "days");
+            SelectedDate = dat;
+            if (isDateMatching(dat, moment())) { // check for today
+                document.getElementById("buttonToday").innerText = "Today";
+            } else {
+                document.getElementById("buttonToday").innerText = dat.format("ddd, Do MMM");
+            }
+            showTimers();
+            break;
+
+        default:
+            alert("changeDate: invalid period passed to changeDate()");
+    }
+}
+
+
 function getCoordModalEditTimer(idTask) {
     "use strict";
 
@@ -602,6 +626,12 @@ function setStyle() {
     document.title = APP_NAME;
     document.getElementById("titleWindow").innerText = APP_NAME;
 
+    /* button styling */
+    var style = document.createElement( "style" );
+    document.head.appendChild( style );
+    style.innerText = ".mybutton:active { background-color: " + 
+        getThemeColor("w3-theme-l3") + "; }";
+    
     /* set the z-index for all elements */
     /* benefit of puting here is you can have an overview of all the elements stack */
     document.getElementById("divHeader").style.zIndex = Z_INDEX_MED;
@@ -709,25 +739,3 @@ function updateTimer(idTask) {
     document.getElementById("divTimer_" + idTask).innerText = hr + ":" + min + ":" + sec;
 }
 
-/* used for displaying data for a different date */
-/* period argument is added for scalability */
-function changeDate(offset, period) {
-    "use strict";
-
-    switch (period) {
-        case "day":
-            var dat = moment(SelectedDate);
-            dat.add(offset, "days");
-            SelectedDate = dat;
-            if (isDateMatching(dat, moment())) { // check for today
-                document.getElementById("buttonToday").innerText = "Today";
-            } else {
-                document.getElementById("buttonToday").innerText = dat.format("ddd, Do MMM");
-            }
-            showTimers();
-            break;
-
-        default:
-            alert("changeDate: invalid period passed to changeDate()");
-    }
-}
