@@ -242,6 +242,14 @@ function getSpentDuration(idxTask) {
     return dur;
 }
 
+
+/* get a corresponding color from the current theme */
+function getThemeColor( idColor ) {
+    var div = document.getElementById( idColor );
+    return window.getComputedStyle(div, null).getPropertyValue("background-color");
+}
+
+
 function hideModalEditTimer() {
     "use strict";
 
