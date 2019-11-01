@@ -146,25 +146,31 @@ DB.prototype.addPauseTime = function (idTask) {
 };
 
 
+/* task can be parent or child */
 /* This will return id of the newly created task */
-DB.prototype.addTask = function (name) {
+DB.prototype.addTask = function (name, idPTask) {
     "use strict";
 
-    /* find the next available idTask */
-    var idTask = 0;
-    while (!this.root.data.arrTasks.every(function (task) {
-            return (task.id !== idTask);
-        })) {
-        idTask += 1;
+    /* If no parent, then create a parent task. */
+    /* Otherwise, create a child task and append to parent. */
+    if(idPTask == undefined || idPTask == null) {
+        /* find the next available idTask */
+        var idTask = 0;
+        while (!this.root.data.arrTasks.every(function (task) {
+                return (task.id !== idTask);
+            })) {
+            idTask += 1;
+        }
+
+        /* filling the data structure */
+        var task = new ParentTask(idTask, name);
+        this.root.data.arrTasks.push(task);
+    }
+    else {
+//        console.log( this.root.data.arrTasks[idPTask] );
     }
     
-    /* filling the data structure */
-    var task = new ParentTask(idTask, name);
-
-    /* save */
-    this.root.data.arrTasks.push(task);
     this.save();
-    
     return idTask;
 };
 

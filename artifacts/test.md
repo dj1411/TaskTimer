@@ -1,4 +1,5 @@
-- Add new timer
+- Add new task
+- Add a child task
 - play/pause timer
 - on app open old timer values should be displayed
 - on app open running timers should be ticking

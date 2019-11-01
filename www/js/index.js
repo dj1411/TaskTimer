@@ -54,6 +54,8 @@ function main() {
     resumeTimer();
     setStyle();
     setEvents();
+    
+//    db.addTask("SampleTask", 0);
 }
 
 
