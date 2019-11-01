@@ -234,13 +234,13 @@ function getIdxTW( idTask, idTW ) {
 /* This function will return the spent duration on a task for the active day/week/month */
 /* as of now its not thought of getting duration of day other than the active one */
 /* if its forseen, an addtional date parameter can be added */
-function getSpentDuration(idxTask) {
+function getSpentDuration(idTask) {
     "use strict";
 
     var dur = moment.duration(0);
 
     /* add duration as per time window */
-    db.root.data.arrTasks[idxTask].arrTimeWindow.forEach(function (tw, idTW) {
+    db.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.forEach(function (tw, idTW) {
         if (isDateMatching(tw.startTime, SelectedDate)) {
             var start = moment(tw.startTime);
             var end = moment(); // this is for running timer
@@ -394,12 +394,13 @@ function onclickStartTimer(event) {
     var idxTask = getIdxTask(idTask);
 
     /* find any running timer and pause it */
-    var idTaskRunning = db.root.data.arrTasks[getIdxTaskRunning()].id;
-    if (-1 !== idTaskRunning) {
+    var idxTaskRunning = getIdxTaskRunning();
+    if (-1 !== idxTaskRunning) {
+        var idTaskRunning = db.root.data.arrTasks[idxTaskRunning].id;
         pauseTimer(idTaskRunning);
     }
-
-    startTimer(idxTask);
+    
+    startTimer(idTask);
 }
 
 function onclickToday() {
@@ -434,10 +435,7 @@ function onclickPauseTimer(event) {
     /* find id of the task */
     var id = parseInt(event.target.parentElement.parentElement.getAttribute("id").split("_")[1], 10);
 
-    /* find array index of task */
-    var idx = getIdxTask(id);
-
-    pauseTimer(idx);
+    pauseTimer(id);
 }
 
 function onmenuTask(event, idTask) {
@@ -532,15 +530,12 @@ function onsubmitEditTimer() {
     var idTW = db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].id;
     db.editTW(idTask, idTW, start, end, brk);
 
-    updateTimer(getIdxTask(SelectedTask));
+    updateTimer(SelectedTask);
     hideModalEditTimer();
 }
 
-function pauseTimer(idxTask) {
+function pauseTimer(idTask) {
     "use strict";
-
-    /* find the id */
-    var idTask = db.root.data.arrTasks[idxTask].id;
 
     /* pause the periodic timer update */
     if (-1 !== timerTask)
@@ -551,7 +546,7 @@ function pauseTimer(idxTask) {
     document.getElementById("buttonPause_" + idTask).style.display = "none";
 
     /* add pause time to database */
-    db.addPauseTime(idxTask);
+    db.addPauseTime(idTask);
 }
 
 /* start updating any running timer from another session */
@@ -634,7 +629,7 @@ function showTimers() {
     for (var idxTask = 0; idxTask < db.root.data.arrTasks.length; idxTask++) {
         var idTask = db.root.data.arrTasks[idxTask].id;
 
-        var durationTotal = getSpentDuration(idxTask);
+        var durationTotal = getSpentDuration(idTask);
         var hr = (durationTotal.hours() > 9) ? durationTotal.hours() : "0" + durationTotal.hours();
         var min = (durationTotal.minutes() > 9) ? durationTotal.minutes() : "0" + durationTotal.minutes();
         var sec = (durationTotal.seconds() > 9) ? durationTotal.seconds() : "0" + durationTotal.seconds();
@@ -645,10 +640,8 @@ function showTimers() {
 
 /* start timer of a given task */
 /* this is called from onclickStartTimer() */
-function startTimer(idxTask) {
+function startTimer(idTask) {
     "use strict";
-
-    var idTask = db.root.data.arrTasks[idxTask].id;
 
     /* add start time to database */
     db.addStartTime(idTask);
@@ -682,18 +675,18 @@ function updateRunningTimer() {
         }
     });
 
+    var task = db.root.data.arrTasks[idxTask];
+    var idTask = task.id;
+    
     /* pause the timer if it has overflown to next day */
     if (!isDateMatching(db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].startTime, moment())) {
-        pauseTimer(idxTask);
+        pauseTimer(idTask);
     }
 
     /* update the timer display if 'today' is selected */
     if (idxTW !== -1 && isDateMatching(moment(SelectedDate), moment())) { // if today
-        var task = db.root.data.arrTasks[idxTask];
-        var idTask = task.id;
-
         /* display the time passed */
-        updateTimer(idxTask);
+        updateTimer(idTask);
 
         /* toggle play/pause icon.
          * This is done here because updateRunningTimer() is called from main() also.
@@ -706,12 +699,10 @@ function updateRunningTimer() {
 }
 
 /* update the display of a given timer */
-function updateTimer(idxTask) {
+function updateTimer(idTask) {
     "use strict";
 
-    var idTask = db.root.data.arrTasks[idxTask].id;
-
-    var durationTotal = getSpentDuration(idxTask);
+    var durationTotal = getSpentDuration(idTask);
     var hr = (durationTotal.hours() > 9) ? durationTotal.hours() : "0" + durationTotal.hours();
     var min = (durationTotal.minutes() > 9) ? durationTotal.minutes() : "0" + durationTotal.minutes();
     var sec = (durationTotal.seconds() > 9) ? durationTotal.seconds() : "0" + durationTotal.seconds();
