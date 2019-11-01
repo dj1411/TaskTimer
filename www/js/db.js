@@ -257,6 +257,9 @@ DB.prototype.load = function () {
 /* do not reorder this function */
 DB.prototype.save = function () {
     "use strict";
-
-    localStorage.setItem("db" + APP_NAME, JSON.stringify(this.root));
+    
+    var name = "db" + APP_NAME;
+    name = name.replace(" ", "");
+    
+    localStorage.setItem(name, JSON.stringify(this.root));
 };
