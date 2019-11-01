@@ -43,17 +43,46 @@ function TimeWindow(id) {
 }
 
 
-function ParentTask(idTask) {
+function ChildTask(idTask, name) {
     "use strict";
 
     /* inherited data from Signature */
     this.id = idTask;
 
     /* inherit data from Task*/
-    this.name = null;
+    this.name = name;
     this.arrTimeWindow = [];
 }
 
+
+function ParentTask(idTask, name) {
+    "use strict";
+
+    /* inherited data from Signature */
+    this.id = idTask;
+
+    /* inherit data from Task*/
+    this.name = name;
+    this.arrTimeWindow = [];
+
+    /* own elements */
+    this.arrChildTasks = [];
+}
+
+
+ParentTask.prototype.addChildTask = function(name) {
+    /* find the next available id for ChildTask */
+    var idCTask = 0;
+    while (!this.arrChildTasks.every(function (ctask) {
+            return (ctask.id !== idCTask);
+        })) {
+        idCTask += 1;
+    }
+    
+    /* create a child taks with the given name and add to the array */
+    var child = new ChildTask( idCTask, name );
+    this.arrChildTasks.push( child );
+}
 
 function Data() {
     "use strict";
@@ -117,16 +146,26 @@ DB.prototype.addPauseTime = function (idTask) {
 };
 
 
-DB.prototype.addTask = function (idTask, name) {
+/* This will return id of the newly created task */
+DB.prototype.addTask = function (name) {
     "use strict";
 
+    /* find the next available idTask */
+    var idTask = 0;
+    while (!this.root.data.arrTasks.every(function (task) {
+            return (task.id !== idTask);
+        })) {
+        idTask += 1;
+    }
+    
     /* filling the data structure */
-    var task = new ParentTask(idTask);
-    task.name = name;
+    var task = new ParentTask(idTask, name);
 
     /* save */
     this.root.data.arrTasks.push(task);
     this.save();
+    
+    return idTask;
 };
 
 

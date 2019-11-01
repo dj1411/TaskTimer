@@ -41,7 +41,7 @@ if (navigator.userAgent.indexOf("Android") >= 0) {
 /* keep the function at top for better readability */
 function main() {
     "use strict";
-
+    
     /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
     db.saveToFile();
 //    db.loadFromFile();
@@ -473,16 +473,8 @@ function onmenuTask(event, idTask) {
 function onsubmitAddEditTask() {
     "use strict";
 
-    /* find the next available idTask */
-    var idTask = 0;
-    while (!db.root.data.arrTasks.every(function (task) {
-            return (task.id !== idTask);
-        })) {
-        idTask += 1;
-    }
-    
     /* add to database */
-    db.addTask(idTask, document.getElementById("textTaskName").value);
+    var idTask = db.addTask(document.getElementById("textTaskName").value);
     
     /* take care of the UI */
     document.getElementById("modalAddEditTask").style.display = "none";
