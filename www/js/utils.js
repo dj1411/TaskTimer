@@ -35,3 +35,11 @@ function isDateMatching(date1, date2) {
         return false;
     }
 }
+
+
+/* return the name for local storage. prefix is "db" or "ss" */
+function getStorName( prefix ) {
+    var name = prefix + APP_NAME;
+    name = name.replace(" ", "");
+    return name;
+}

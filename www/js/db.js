@@ -130,21 +130,24 @@ DB.prototype.addTask = function (idTask, name) {
 };
 
 
-DB.prototype.addTW = function (idxTask, startTime, endTime, brk) {
+DB.prototype.addTW = function (idTask, startTime, endTime, brk) {
     "use strict";
 
-    var tw = new TimeWindow(this.root.data.arrTasks[idxTask].arrTimeWindow.length);
+    var tw = new TimeWindow(this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.length);
     tw.startTime = startTime;
     tw.endTime = endTime;
     tw.breakdur = brk;
-    this.root.data.arrTasks[idxTask].arrTimeWindow.push(tw);
+    this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.push(tw);
     this.save();
 };
 
 
-DB.prototype.editTW = function (idxTask, idxTW, startTime, endTime, brk) {
+DB.prototype.editTW = function (idTask, idTW, startTime, endTime, brk) {
     "use strict";
 
+    var idxTask = getIdxTask(idTask);
+    var idxTW = getIdxTW(idTask, idTW);
+    
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].startTime = startTime;
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].endTime = endTime;
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].breakdur = brk;
@@ -249,7 +252,7 @@ DB.prototype.loadFromFile = function () {
 DB.prototype.load = function () {
     "use strict";
 
-    var d = localStorage.getItem("db" + APP_NAME);
+    var d = localStorage.getItem(getStorName("db"));
     if (d !== null && d !== undefined) {
         this.root = JSON.parse(d);
     }
@@ -261,8 +264,5 @@ DB.prototype.load = function () {
 DB.prototype.save = function () {
     "use strict";
     
-    var name = "db" + APP_NAME;
-    name = name.replace(" ", "");
-    
-    localStorage.setItem(name, JSON.stringify(this.root));
+    localStorage.setItem(getStorName("db"), JSON.stringify(this.root));
 };

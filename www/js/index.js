@@ -149,6 +149,7 @@ function addTaskDiv(idTask) {
         document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";    
 }
 
+
 function getCoordModalEditTimer(idTask) {
     "use strict";
 
@@ -186,6 +187,8 @@ function getCoordModalEditTimer(idTask) {
     return [x1Modal, y1Modal];
 }
 
+
+/* convert task id to idx */
 function getIdxTask(idTask) {
     "use strict";
 
@@ -201,6 +204,7 @@ function getIdxTask(idTask) {
     }
 }
 
+
 function getIdxTaskRunning() {
     "use strict";
 
@@ -212,11 +216,20 @@ function getIdxTaskRunning() {
     });
 }
 
-function getIdTask(idxTask) {
-    "use strict";
 
-    return db.root.data.arrTasks[idxTask].id;
+/* convert id to idx for time window */
+function getIdxTW( idTask, idTW ) {
+    "use strict";
+    
+    var idxTask = db.root.data.arrTasks.findIndex(function (task) {
+        return (task.id === idTask);
+    });
+    
+    return db.root.data.arrTasks[idxTask].arrTimeWindow.findIndex( function (TW) {
+        return (TW.id === idTW);
+    });
 }
+
 
 /* This function will return the spent duration on a task for the active day/week/month */
 /* as of now its not thought of getting duration of day other than the active one */
@@ -515,7 +528,9 @@ function onsubmitEditTimer() {
         idxTW = moment(tw.startTime).isAfter(moment(lastTW.startTime)) ? i : idxTW;
     }
 
-    db.editTW(idxTask, idxTW, start, end, brk);
+    var idTask = SelectedTask;
+    var idTW = db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].id;
+    db.editTW(idTask, idTW, start, end, brk);
 
     updateTimer(getIdxTask(SelectedTask));
     hideModalEditTimer();
