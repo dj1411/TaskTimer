@@ -64,11 +64,11 @@
                     <span class="w3-bar-item w3-right" style="display: none"><i class="fas fa-pause"></i></span>
                 </div>
                 <div class="w3-xxlarge w3-center"><label id="divTimer_0" onclick="onclickEditTimer(event)">00:00:00</label></div>
-                <table width="100%" class="w3-border w3-margin-bottom">
-                    <tr>
-                        <td>Subtask</td>
-                        <td>00:00:00</td>
-                        <td><i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i></td>
+                <table id="tableTask_0" width="100%" class="w3-border w3-margin-bottom">
+                    <tr id="divTask_5">
+                        <td style="max-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Subtaskkk kkkkkkkkkkkkkkkkkkk kkkkkkkkkkkkkkkkkkkkkkkk kkkkkkkkkkkkk</td>
+                        <td style="width: 8ch">00:00:00</td>
+                        <td style="width: 2ch"><i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i></td>
                     </tr>
                     <tr>
                         <td>Subtask</td>
@@ -83,18 +83,34 @@
                 </table>
             </div>
             
-            <div id="divTask_1" class="w3-card w3-container w3-round w3-theme-light w3-margin-left w3-margin-right w3-margin-bottom" oncontextmenu="onmenuTask(event, 1)" style="user-select: none">
+            <div id="divTask_1" class="w3-card w3-container w3-round w3-theme-light w3-margin-left w3-margin-right w3-margin-bottom" oncontextmenu="onmenuTask(event, 0)" style="user-select: none">
                 <div class="w3-bar w3-large">
                     <span class="w3-bar-item"><i class="fas fa-clipboard-check"></i></span>
                     <span class="w3-bar-item">Parent task2</span>
-                    <i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i>                    
+                    <i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i>
                     <span class="w3-bar-item w3-right" style="display: none"><i class="fas fa-pause"></i></span>
                 </div>
-                <div class="w3-xxlarge w3-center"><label id="divTimer_1" onclick="onclickEditTimer(event)">00:00:00</label></div>
-                <div class="w3-cell-row w3-small">
-                </div>
+                <div class="w3-xxlarge w3-center"><label id="divTimer_0" onclick="onclickEditTimer(event)">00:00:00</label></div>
+                <table id="tableTask_0" width="100%" class="w3-border w3-margin-bottom">
+                    <tr id="divTask_5">
+                        <td>Subtask</td>
+                        <td style="width: 8ch">00:00:00</td>
+                        <td style="width: 2ch"><i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i></td>
+                    </tr>
+                    <tr>
+                        <td>Subtask</td>
+                        <td>00:00:00</td>
+                        <td><i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i></td>
+                    </tr>
+                    <tr>
+                        <td>Subtask</td>
+                        <td>00:00:00</td>
+                        <td><i class="fas fa-play w3-bar-item w3-right mybutton1" onclick="onclickStartTimer(event)"></i></td>
+                    </tr>
+                </table>
             </div>
 -->
+            
         </div>
         
         <!-- add/edit task modal -->

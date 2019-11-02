@@ -204,11 +204,14 @@ DB.prototype.editTW = function (idTask, idTW, startTime, endTime, brk) {
 
 /* Return the parent task id fo the given child task id */
 DB.prototype.findIdPTask = function (idCTask) {
-    return this.root.data.arrTasks.find( function(task) {
+    var ret = this.root.data.arrTasks.find( function(task) {
        return task.arrChildTasks.find( function(ctask) {
            return ctask.id == idCTask;
        });
-    }).id;
+    });
+    
+    if(ret != undefined)
+        return ret.id;
 }
 
 

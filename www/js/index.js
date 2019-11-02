@@ -59,95 +59,164 @@ function main() {
 
 /* This function is called while adding a new task */
 /* Also when initially loading the app */
-function addTaskDiv(idTask) {
+function addEditTaskDiv(idTask) {
     "use strict";
 
-    /* find the array index */
-    var idxTask = getIdxTask(idTask);
+    /* create the containing div element if does not exist */
+    var divTask = null;
+    var idPTask = db.findIdPTask(idTask);
+    var taskObj = db.getTaskObj(idTask);
+    if(!document.getElementById( "divTask_" + idTask )) {
+        
+        /* If parent task, then create div. otherwise create table */
+        if(idPTask == undefined) {
+            /* remove blank task to scroll past (+) button */
+            var divTaskBlank = document.getElementById("divTask_blank");
+            if (divTaskBlank !== null) {
+                document.getElementById("divBody").removeChild(divTaskBlank);
+            }
 
-    /* remove blank task to scroll past (+) button */
-    var divTaskBlank = document.getElementById("divTask_blank");
-    if (divTaskBlank !== null) {
-        document.getElementById("divBody").removeChild(divTaskBlank);
+            /* create the div container */
+            var divCard = document.createElement("div");
+            document.getElementById("divBody").appendChild(divCard);
+            divCard.classList.add("w3-card", "w3-margin-bottom", "w3-margin-right", 
+                      "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
+            divCard.oncontextmenu = function (event) {
+                onmenuTask(event, idTask);
+            };
+            
+            /* create a placeholder for parent task contents */
+            divTask = document.createElement("div");
+            divCard.appendChild(divTask);
+            
+            /* create empty table for holding child tasks */
+            var table = document.createElement("table");
+            table.id = "tableTask_" + idTask;
+            table.style.width = "100%";
+            table.classList.add( "w3-border", "w3-margin-bottom");
+            divCard.appendChild(table);
+        }
+        else {
+            /* create table row */
+            var table = document.getElementById( "tableTask_" + idPTask );
+            divTask = table.insertRow(-1);
+            divTask.id = "divTask_" + idTask;
+        }
+        
+        /* add an blank task to scroll past (+) button */
+        divTaskBlank = document.createElement("div");
+        divTaskBlank.id = "divTask_blank";
+        document.getElementById("divBody").appendChild(divTaskBlank);
+        divTaskBlank.classList.add("w3-container");
+        divTaskBlank.style.height = window.innerHeight -
+            document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";           
+    }
+    else {
+        divTask = document.getElementById( "divTask_" + idTask);
+        divTask.innerText = "";
     }
     
-    /* create the div container */
-    var divTask = document.createElement("div");
-    document.getElementById("divBody").appendChild(divTask);
-    divTask.id = "divTask_" + idTask;
-    divTask.classList.add("w3-card", "w3-margin-bottom", "w3-margin-right", 
-              "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
-    divTask.oncontextmenu = function (event) {
-        onmenuTask(event, idTask);
-    };
+    /* parent task */
+    if(idPTask == undefined) { 
+        /* create the first row */
+        var divHeader = document.createElement("div");
+        divTask.appendChild(divHeader);
+        divHeader.classList.add("w3-bar", "w3-large");
 
-    /* create the first row */
-    var divHeader = document.createElement("div");
-    divTask.appendChild(divHeader);
-    divHeader.classList.add("w3-bar", "w3-large");
+        /* task icon */
+        var span = document.createElement("span");
+        divHeader.appendChild(span);
+        span.classList.add("w3-bar-item");
+        var icon = document.createElement("i");
+        span.appendChild(icon);
+        icon.classList.add("fas", "fa-clipboard-check");
 
-    /* task icon */
-    var span = document.createElement("span");
-    divHeader.appendChild(span);
-    span.classList.add("w3-bar-item");
-    var icon = document.createElement("i");
-    span.appendChild(icon);
-    icon.classList.add("fas", "fa-clipboard-check");
+        /* task name */
+        span = document.createElement("span");
+        divHeader.appendChild(span);
+        span.classList.add("w3-bar-item");
+        span.innerText = taskObj.name;
 
-    /* task name */
-    span = document.createElement("span");
-    divHeader.appendChild(span);
-    span.classList.add("w3-bar-item");
-    span.innerText = db.root.data.arrTasks[idxTask].name;
+        /* introduce play pause button only if there are no child tasks */
+        if(taskObj.arrChildTasks.length == 0) {
+            /* play button */
+            icon = document.createElement("i");
+            divHeader.appendChild(icon);
+            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+            icon.classList.add("fas", "fa-play");
+            icon.onclick = onclickStartTimer;
+            icon.id = "buttonPlay_" + idTask;
 
-    /* play button */
-    icon = document.createElement("i");
-    divHeader.appendChild(icon);
-    icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-    icon.classList.add("fas", "fa-play");
-    icon.onclick = onclickStartTimer;
-    icon.id = "buttonPlay_" + idTask;
+            /* pause button */
+            icon = document.createElement("i");
+            divHeader.appendChild(icon);
+            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+            icon.classList.add("fas", "fa-pause");
+            icon.id = "buttonPause_" + idTask;
+            icon.style.display = "none";
+            icon.onclick = onclickPauseTimer;
+        }
 
-    /* pause button */
-    icon = document.createElement("i");
-    divHeader.appendChild(icon);
-    icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-    icon.classList.add("fas", "fa-pause");
-    icon.id = "buttonPause_" + idTask;
-    icon.style.display = "none";
-    icon.onclick = onclickPauseTimer;
+        /* the timer */
+        var divTimer = document.createElement("div");
+        divTask.appendChild(divTimer);
+        divTimer.classList.add("w3-xxlarge", "w3-center");
+        var divTimerLabel = document.createElement("label");
+        divTimer.appendChild(divTimerLabel);
+        divTimerLabel.id = "divTimer_" + idTask;
+        divTimerLabel.innerText = "00:00:00";
+        divTimerLabel.onclick = function (event) {
+            onclickEditTimer(event);
+        };
 
-    /* the timer */
-    var divTimer = document.createElement("div");
-    divTask.appendChild(divTimer);
-    divTimer.classList.add("w3-xxlarge", "w3-center");
-    var divTimerLabel = document.createElement("label");
-    divTimer.appendChild(divTimerLabel);
-    divTimerLabel.id = "divTimer_" + idTask;
-    divTimerLabel.innerText = "00:00:00";
-    divTimerLabel.onclick = function (event) {
-        onclickEditTimer(event);
-    };
-
-    /* the footer */
-    var divFooter = document.createElement("div");
-    divTask.appendChild(divFooter);
-    divFooter.classList.add("w3-cell-row", "w3-small");
-    span = document.createElement("span");
-    divFooter.appendChild(span);
-    span.classList.add("w3-cell");
-    var budgetHours = db.root.data.arrTasks[idxTask].budgetHours;
-    if (budgetHours !== null && budgetHours !== undefined && !isNaN(budgetHours) && budgetHours !== "" && budgetHours !== 0) {
-        span.innerText = "Excess time: 0 hrs";
+        /* the footer */
+        var divFooter = document.createElement("div");
+        divTask.appendChild(divFooter);
+        divFooter.classList.add("w3-cell-row", "w3-small");
+        span = document.createElement("span");
+        divFooter.appendChild(span);
+        span.classList.add("w3-cell");
+        var budgetHours = taskObj.budgetHours;
+        if (budgetHours !== null && budgetHours !== undefined && !isNaN(budgetHours) && budgetHours !== "" && budgetHours !== 0) {
+            span.innerText = "Excess time: 0 hrs";
+        }
     }
-    
-    /* add an blank task to scroll past (+) button */
-    divTaskBlank = document.createElement("div");
-    divTaskBlank.id = "divTask_blank";
-    document.getElementById("divBody").appendChild(divTaskBlank);
-    divTaskBlank.classList.add("w3-container");
-    divTaskBlank.style.height = window.innerHeight -
-        document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";    
+    /* child task */
+    else { 
+            /* name of child task */
+            var cell = divTask.insertCell(-1);
+            cell.style.maxWidth = 0;
+            cell.style.whiteSpace = "nowrap";
+            cell.style.overflow = "hidden";
+            cell.style.textOverflow = "ellipsis";
+            cell.innerText = taskObj.name;
+            
+            /* The timer */
+            cell = divTask.insertCell(-1);
+            cell.style.width = "8ch";
+            cell.innerText = "00:00:00";
+            
+            /* play/pause button */
+            cell = divTask.insertCell(-1);
+            cell.style.width = "2ch";   
+        
+            /* play button */
+            icon = document.createElement("i");
+            cell.appendChild(icon);
+            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+            icon.classList.add("fas", "fa-play");
+            icon.onclick = onclickStartTimer;
+            icon.id = "buttonPlay_" + idTask;
+
+            /* pause button */
+            icon = document.createElement("i");
+            cell.appendChild(icon);
+            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+            icon.classList.add("fas", "fa-pause");
+            icon.id = "buttonPause_" + idTask;
+            icon.style.display = "none";
+            icon.onclick = onclickPauseTimer;
+    }
 }
 
 
@@ -479,7 +548,7 @@ function onsubmitAddEditTask() {
     
     /* take care of the UI */
     document.getElementById("modalAddEditTask").style.display = "none";
-    addTaskDiv(idTask);
+    addEditTaskDiv(idTask);
 }
 
 function onsubmitEditTimer() {
@@ -640,10 +709,12 @@ function setStyle() {
 function showTaskDivs() {
     "use strict";
 
-    /* loop through array of tasks */
-    for (var i = 0; i < db.root.data.arrTasks.length; i++) {
-        addTaskDiv(db.root.data.arrTasks[i].id);
-    }
+    db.root.data.arrTasks.forEach( function(task) {
+        addEditTaskDiv(task.id);
+        task.arrChildTasks.forEach( function(ctask) {
+            addEditTaskDiv(ctask.id);
+        });
+    });
 }
 
 /* update all timer displays with the total time spent */
