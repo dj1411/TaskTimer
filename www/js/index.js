@@ -315,23 +315,6 @@ function getCoordModalEditTimer(idTask) {
 }
 
 
-/* convert task id to idx */
-function getIdxTask(idTask) {
-    "use strict";
-
-    var idxTask = db.root.data.arrTasks.findIndex(function (task) {
-        return (task.id === idTask);
-    });
-
-    if (idxTask === -1) {
-        alert("getIdxTask: could not find task id");
-        return -1;
-    } else {
-        return idxTask;
-    }
-}
-
-
 function getIdxTaskRunning() {
     "use strict";
 
@@ -367,7 +350,7 @@ function getSpentDuration(idTask) {
     var dur = moment.duration(0);
 
     /* add duration as per time window */
-    db.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.forEach(function (tw, idTW) {
+    db.getTaskObj(idTask).arrTimeWindow.forEach(function (tw, idTW) {
         if (isDateMatching(tw.startTime, SelectedDate)) {
             var start = moment(tw.startTime);
             var end = moment(); // this is for running timer
@@ -464,8 +447,7 @@ function onclickEditTimer(event) {
 
     /* find task id */
     var idTask = parseInt(event.target.id.split("_")[1], 10);
-    var idxTask = getIdxTask(idTask);
-    var task = db.root.data.arrTasks[idxTask];
+    var task = db.getTaskObj(idTask);
 
     /* filter the time windows for a date */
     var arrTW = task.arrTimeWindow.filter(function (tw) {
@@ -517,9 +499,6 @@ function onclickStartTimer(event) {
 
     /* find id of the task */
     var idTask = parseInt(event.target.parentElement.parentElement.getAttribute("id").split("_")[1], 10);
-
-    /* find array index of task */
-    var idxTask = getIdxTask(idTask);
 
     /* find any running timer and pause it */
     var idxTaskRunning = getIdxTaskRunning();
@@ -632,11 +611,8 @@ function onsubmitEditTimer() {
 
     }
 
-    /* if validation success save updated data and hide the modal */
-    var idxTask = getIdxTask(SelectedTask);
-
     /* find the last time window */
-    var arrTW = db.root.data.arrTasks[idxTask].arrTimeWindow;
+    var arrTW = db.getTaskObj(SelectedTask).arrTimeWindow;
     var idxTW = 0;
     for (var i = 1; i < arrTW.length; i++) {
         /* filter out only the selected date */
@@ -645,13 +621,13 @@ function onsubmitEditTimer() {
         }
 
         /* find the last TW */
-        var tw = db.root.data.arrTasks[idxTask].arrTimeWindow[i];
-        var lastTW = db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW];
+        var tw = db.getTaskObj(SelectedTask).arrTimeWindow[i];
+        var lastTW = db.getTaskObj(SelectedTask).arrTimeWindow[idxTW];
         idxTW = moment(tw.startTime).isAfter(moment(lastTW.startTime)) ? i : idxTW;
     }
 
     var idTask = SelectedTask;
-    var idTW = db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].id;
+    var idTW = db.getTaskObj(idTask).arrTimeWindow[idxTW].id;
     db.editTW(idTask, idTW, start, end, brk);
 
     updateTimer(SelectedTask);

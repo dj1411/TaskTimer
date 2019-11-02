@@ -116,7 +116,7 @@ function DB() {
 DB.prototype.addStartTime = function (idTask) {
     "use strict";
 
-    var tw = new TimeWindow(this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.length);
+    var tw = new TimeWindow(this.getTaskObj(idTask).arrTimeWindow.length);
     tw.startTime = moment();
     this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.push(tw);
     this.save();
@@ -127,12 +127,12 @@ DB.prototype.addPauseTime = function (idTask) {
     "use strict";
 
     /* find the running timer */
-    var idxTW = this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.findIndex(function (tw) {
+    var idxTW = this.getTaskObj(idTask).arrTimeWindow.findIndex(function (tw) {
         return (tw.startTime !== null && tw.endTime === null);
     });
 
     /* add end time */
-    var arrTW = this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow;
+    var arrTW = this.getTaskObj(idTask).arrTimeWindow;
 
     if (isDateMatching(arrTW[idxTW].startTime, moment())) {
         arrTW[idxTW].endTime = moment();
@@ -162,13 +162,13 @@ DB.prototype.addTask = function (name, idPTask) {
     /* If no parent, then create a parent task. */
     if(idPTask == undefined || idPTask == null) {
         /* filling the data structure */
-        idTask = base.getNextIdTask();
+        idTask = this.getNextIdTask();
         var task = new ParentTask(idTask, name);
         this.root.data.arrTasks.push(task);
     }
     /* Otherwise, create a child task and append to parent. */
     else {
-        idTask = base.getTaskObj(idPTask).addChildTask( name );
+        idTask = this.getTaskObj(idPTask).addChildTask( name );
     }
     
     this.save();
@@ -179,7 +179,7 @@ DB.prototype.addTask = function (name, idPTask) {
 DB.prototype.addTW = function (idTask, startTime, endTime, brk) {
     "use strict";
 
-    var tw = new TimeWindow(this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.length);
+    var tw = new TimeWindow(this.getTaskObj(idTask).arrTimeWindow.length);
     tw.startTime = startTime;
     tw.endTime = endTime;
     tw.breakdur = brk;
