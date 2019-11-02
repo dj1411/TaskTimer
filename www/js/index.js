@@ -95,6 +95,14 @@ function addEditTaskDiv(idTask) {
             table.style.width = "100%";
             table.classList.add( "w3-border", "w3-margin-bottom");
             divCard.appendChild(table);
+
+            /* add an blank task to scroll past (+) button */
+            divTaskBlank = document.createElement("div");
+            divTaskBlank.id = "divTask_blank";
+            document.getElementById("divBody").appendChild(divTaskBlank);
+            divTaskBlank.classList.add("w3-container");
+            divTaskBlank.style.height = window.innerHeight -
+                document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";           
         }
         else {
             /* create table row */
@@ -102,14 +110,6 @@ function addEditTaskDiv(idTask) {
             divTask = table.insertRow(-1);
             divTask.id = "divTask_" + idTask;
         }
-        
-        /* add an blank task to scroll past (+) button */
-        divTaskBlank = document.createElement("div");
-        divTaskBlank.id = "divTask_blank";
-        document.getElementById("divBody").appendChild(divTaskBlank);
-        divTaskBlank.classList.add("w3-container");
-        divTaskBlank.style.height = window.innerHeight -
-            document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";           
     }
     else {
         divTask = document.getElementById( "divTask_" + idTask);
