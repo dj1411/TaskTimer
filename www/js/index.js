@@ -63,7 +63,7 @@ function addEditTaskDiv(idTask) {
     "use strict";
 
     var divTask = null;
-    var idPTask = db.findIdPTask(idTask);
+    var idPTask = db.getIdPTask(idTask);
     var taskObj = db.getTaskObj(idTask);
     var ptaskObj = db.getTaskObj(idPTask);
 
@@ -196,7 +196,13 @@ function addEditTaskDiv(idTask) {
         /* The timer */
         cell = divTask.insertCell(-1);
         cell.style.width = "8ch";
-        cell.innerText = "00:00:00";
+        var divTimerLabel = document.createElement("label");
+        cell.appendChild(divTimerLabel);
+        divTimerLabel.id = "divTimer_" + idTask;
+        divTimerLabel.innerText = "00:00:00";
+        divTimerLabel.onclick = function (event) {
+            onclickEditTimer(event);
+        };
 
         /* play/pause button */
         cell = divTask.insertCell(-1);
@@ -498,14 +504,14 @@ function onclickStartTimer(event) {
     "use strict";
 
     /* find id of the task */
-    var idTask = parseInt(event.target.parentElement.parentElement.getAttribute("id").split("_")[1], 10);
+    var idTask = parseInt( event.target.id.split("_")[1] );
 
     /* find any running timer and pause it */
-    var idxTaskRunning = getIdxTaskRunning();
-    if (-1 !== idxTaskRunning) {
-        var idTaskRunning = db.root.data.arrTasks[idxTaskRunning].id;
-        pauseTimer(idTaskRunning);
-    }
+//    var idxTaskRunning = getIdxTaskRunning();
+//    if (-1 !== idxTaskRunning) {
+//        var idTaskRunning = db.root.data.arrTasks[idxTaskRunning].id;
+//        pauseTimer(idTaskRunning);
+//    }
 
     startTimer(idTask);
 }
@@ -765,35 +771,54 @@ function startTimer(idTask) {
     document.getElementById("buttonPause_" + idTask).style.display = "block";
 }
 
-/* update the running timer display. */
-/* this is called periodically */
-/* caveat: if more that one timer is erroneously active, the first one will be selected. */
-/* the same caveat applies to time window also. */
+/* update the running timer display. this is called periodically. */
 function updateRunningTimer() {
     "use strict";
 
     /* find the active time window. */
-    /* assumption: there will be only one active timer at a time. */
-    var idxTW = -1;
-    var idxTask = db.root.data.arrTasks.findIndex(function (task) {
-        idxTW = task.arrTimeWindow.findIndex(function (tw) {
-            return (tw.startTime !== null && tw.endTime === null)
+    var idTask = null;
+    var idxTW = null;
+    for(var ip=0; ip<db.root.data.arrTasks.length; ip++) {
+        
+        var task = db.root.data.arrTasks[ip];
+        
+        /* check if time window found in parent task */
+        idxTW = task.arrTimeWindow.findIndex( function(tw) {
+            return (tw.startTime !== null && tw.endTime === null);
         });
-        if (idxTW !== -1) {
-            return true;
+        
+        /* if time window found in parent task, exit the loop */
+        if(idxTW != -1 && idxTW != null) {
+            idTask = task.id;
+            break;
         }
-    });
-
-    var task = db.root.data.arrTasks[idxTask];
-    var idTask = task.id;
-
+        /* otherwise, look into child tasks */
+        else {
+            for(var ic=0; ic<task.arrChildTasks.length; ic++) {
+                
+                var ctask = task.arrChildTasks[ic];
+                idxTW = ctask.arrTimeWindow.findIndex( function(tw) {
+                    return (tw.startTime !== null && tw.endTime === null);
+                });
+                if(idxTW != -1 && idxTW != null) {
+                    idTask = ctask.id;
+                    break;
+                }                
+            }
+            
+            if(idTask != null && idxTW != null && idxTW != -1) {
+                break;
+            }
+        }
+    }
+    
     /* pause the timer if it has overflown to next day */
-    if (!isDateMatching(db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].startTime, moment())) {
+    if (!isDateMatching(db.getTaskObj(idTask).arrTimeWindow[idxTW].startTime, moment())) {
         pauseTimer(idTask);
     }
 
     /* update the timer display if 'today' is selected */
-    if (idxTW !== -1 && isDateMatching(moment(SelectedDate), moment())) { // if today
+    if (idxTW != null && idxTW !== -1 && isDateMatching(moment(SelectedDate), moment())) {
         /* display the time passed */
         updateTimer(idTask);
 

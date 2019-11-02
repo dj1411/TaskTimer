@@ -116,9 +116,34 @@ function DB() {
 DB.prototype.addStartTime = function (idTask) {
     "use strict";
 
+    /* create a fresh time window object */
     var tw = new TimeWindow(this.getTaskObj(idTask).arrTimeWindow.length);
     tw.startTime = moment();
-    this.root.data.arrTasks[getIdxTask(idTask)].arrTimeWindow.push(tw);
+
+    /* find the element to insert the time window to */
+    var idPTask = this.getIdPTask(idTask);
+    var idxPTask = null;
+    var idxCTask = null;
+    if(idPTask == undefined || idPTask == null) {
+        /* This is a parent task */
+        idxPTask = this.root.data.arrTasks.findIndex( function(task) {
+            return task.id == idTask;
+        });
+        
+        this.root.data.arrTasks[idxPTask].arrTimeWindow.push(tw);
+    }
+    else {
+        /* this is a child task */
+        idxPTask = this.root.data.arrTasks.findIndex( function(task) {
+            return task.id == idPTask;
+        });
+        idxCTask = this.root.data.arrTasks[idxPTask].arrChildTasks.findIndex( function(ctask) {
+            return ctask.id == idTask;
+        });
+        
+        this.root.data.arrTasks[idxPTask].arrChildTasks[idxCTask].arrTimeWindow.push(tw);
+    }
+    
     this.save();
 };
 
@@ -202,7 +227,7 @@ DB.prototype.editTW = function (idTask, idTW, startTime, endTime, brk) {
 
 
 /* Return the parent task id fo the given child task id */
-DB.prototype.findIdPTask = function (idCTask) {
+DB.prototype.getIdPTask = function (idCTask) {
     var ret = this.root.data.arrTasks.find( function(task) {
        return task.arrChildTasks.find( function(ctask) {
            return ctask.id == idCTask;
