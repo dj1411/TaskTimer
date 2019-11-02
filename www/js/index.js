@@ -41,10 +41,10 @@ if (navigator.userAgent.indexOf("Android") >= 0) {
 /* keep the function at top for better readability */
 function main() {
     "use strict";
-    
+
     /* experimental features. for release saveToFile = enabled, loadFromFile = disabled */
     db.saveToFile();
-//    db.loadFromFile();
+    //    db.loadFromFile();
 
     /* removing dummy entries and display everything using js */
     document.getElementById("divBody").innerText = "";
@@ -62,12 +62,14 @@ function main() {
 function addEditTaskDiv(idTask) {
     "use strict";
 
-    /* create the containing div element if does not exist */
     var divTask = null;
     var idPTask = db.findIdPTask(idTask);
     var taskObj = db.getTaskObj(idTask);
+    var ptaskObj = db.getTaskObj(idPTask);
+
+    /* create the containing div element if does not exist */
     if(!document.getElementById( "divTask_" + idTask )) {
-        
+
         /* If parent task, then create div. otherwise create table */
         if(idPTask == undefined) {
             /* remove blank task to scroll past (+) button */
@@ -80,19 +82,21 @@ function addEditTaskDiv(idTask) {
             var divCard = document.createElement("div");
             document.getElementById("divBody").appendChild(divCard);
             divCard.classList.add("w3-card", "w3-margin-bottom", "w3-margin-right", 
-                      "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
+                                  "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
             divCard.oncontextmenu = function (event) {
                 onmenuTask(event, idTask);
             };
-            
+
             /* create a placeholder for parent task contents */
             divTask = document.createElement("div");
             divCard.appendChild(divTask);
-            
+
             /* create empty table for holding child tasks */
             var table = document.createElement("table");
             table.id = "tableTask_" + idTask;
             table.style.width = "100%";
+            table.style.paddingLeft = "5px";
+            table.style.paddingRight = "5px";
             table.classList.add( "w3-border", "w3-margin-bottom");
             divCard.appendChild(table);
 
@@ -104,8 +108,8 @@ function addEditTaskDiv(idTask) {
             divTaskBlank.style.height = window.innerHeight -
                 document.getElementById("buttonAddTask").getBoundingClientRect().top + "px";           
         }
+        /* for child task, create table row */
         else {
-            /* create table row */
             var table = document.getElementById( "tableTask_" + idPTask );
             divTask = table.insertRow(-1);
             divTask.id = "divTask_" + idTask;
@@ -115,7 +119,7 @@ function addEditTaskDiv(idTask) {
         divTask = document.getElementById( "divTask_" + idTask);
         divTask.innerText = "";
     }
-    
+
     /* parent task */
     if(idPTask == undefined) { 
         /* create the first row */
@@ -137,26 +141,24 @@ function addEditTaskDiv(idTask) {
         span.classList.add("w3-bar-item");
         span.innerText = taskObj.name;
 
-        /* introduce play pause button only if there are no child tasks */
-        if(taskObj.arrChildTasks.length == 0) {
-            /* play button */
-            icon = document.createElement("i");
-            divHeader.appendChild(icon);
-            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-            icon.classList.add("fas", "fa-play");
-            icon.onclick = onclickStartTimer;
-            icon.id = "buttonPlay_" + idTask;
+        /* play button. visible only if no child tasks. */
+        icon = document.createElement("i");
+        divHeader.appendChild(icon);
+        icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+        icon.classList.add("fas", "fa-play");
+        icon.onclick = onclickStartTimer;
+        icon.id = "buttonPlay_" + idTask;
+        if(taskObj.arrChildTasks.length > 0) icon.style.display = "none";
 
-            /* pause button */
-            icon = document.createElement("i");
-            divHeader.appendChild(icon);
-            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-            icon.classList.add("fas", "fa-pause");
-            icon.id = "buttonPause_" + idTask;
-            icon.style.display = "none";
-            icon.onclick = onclickPauseTimer;
-        }
-
+        /* pause button */
+        icon = document.createElement("i");
+        divHeader.appendChild(icon);
+        icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+        icon.classList.add("fas", "fa-pause");
+        icon.id = "buttonPause_" + idTask;
+        icon.style.display = "none";
+        icon.onclick = onclickPauseTimer;
+        
         /* the timer */
         var divTimer = document.createElement("div");
         divTask.appendChild(divTimer);
@@ -183,39 +185,45 @@ function addEditTaskDiv(idTask) {
     }
     /* child task */
     else { 
-            /* name of child task */
-            var cell = divTask.insertCell(-1);
-            cell.style.maxWidth = 0;
-            cell.style.whiteSpace = "nowrap";
-            cell.style.overflow = "hidden";
-            cell.style.textOverflow = "ellipsis";
-            cell.innerText = taskObj.name;
-            
-            /* The timer */
-            cell = divTask.insertCell(-1);
-            cell.style.width = "8ch";
-            cell.innerText = "00:00:00";
-            
-            /* play/pause button */
-            cell = divTask.insertCell(-1);
-            cell.style.width = "2ch";   
-        
-            /* play button */
-            icon = document.createElement("i");
-            cell.appendChild(icon);
-            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-            icon.classList.add("fas", "fa-play");
-            icon.onclick = onclickStartTimer;
-            icon.id = "buttonPlay_" + idTask;
+        /* name of child task */
+        var cell = divTask.insertCell(-1);
+        cell.style.maxWidth = 0;
+        cell.style.whiteSpace = "nowrap";
+        cell.style.overflow = "hidden";
+        cell.style.textOverflow = "ellipsis";
+        cell.innerText = taskObj.name;
 
-            /* pause button */
-            icon = document.createElement("i");
-            cell.appendChild(icon);
-            icon.classList.add("w3-bar-item", "w3-right", "mybutton");
-            icon.classList.add("fas", "fa-pause");
-            icon.id = "buttonPause_" + idTask;
-            icon.style.display = "none";
-            icon.onclick = onclickPauseTimer;
+        /* The timer */
+        cell = divTask.insertCell(-1);
+        cell.style.width = "8ch";
+        cell.innerText = "00:00:00";
+
+        /* play/pause button */
+        cell = divTask.insertCell(-1);
+        cell.style.width = "2ch";   
+
+        /* play button */
+        icon = document.createElement("i");
+        cell.appendChild(icon);
+        icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+        icon.classList.add("fas", "fa-play");
+        icon.onclick = onclickStartTimer;
+        icon.id = "buttonPlay_" + idTask;
+
+        /* pause button */
+        icon = document.createElement("i");
+        cell.appendChild(icon);
+        icon.classList.add("w3-bar-item", "w3-right", "mybutton");
+        icon.classList.add("fas", "fa-pause");
+        icon.id = "buttonPause_" + idTask;
+        icon.style.display = "none";
+        icon.onclick = onclickPauseTimer;
+
+        /* if first child, disable play/pause for parent */
+        if(ptaskObj.arrChildTasks.length > 0) {
+            document.getElementById( "buttonPlay_" + idPTask ).style.display = "none";
+            document.getElementById( "buttonPause_" + idPTask ).style.display = "none";
+        }
     }
 }
 
@@ -241,6 +249,31 @@ function changeDate(offset, period) {
         default:
             alert("changeDate: invalid period passed to changeDate()");
     }
+}
+
+
+/* populated the add/edit task drop down with all parent tasks */
+function fillParentTasks() {
+    /* get the select object */
+    var sel = document.getElementById( "selParentTask" );
+
+    /* strategy: here we are removing all elements first and then again adding
+     * them back. This helps if there is a new addition of Parent task.
+     * This also avoids additonal looping over all elements to check if exist */
+
+    /* remove existing elements, except the first one which is 'None' */
+    var len = sel.length;
+    for(var i=1; i<len; i++) {
+        sel.remove(1);
+    }
+
+    /* add everything back */
+    db.root.data.arrTasks.forEach( function(task) {
+        var opt = document.createElement("option");
+        opt.text = task.name;
+        opt.value = "optParentTask_" + task.id;
+        sel.add(opt);
+    });
 }
 
 
@@ -314,11 +347,11 @@ function getIdxTaskRunning() {
 /* convert id to idx for time window */
 function getIdxTW( idTask, idTW ) {
     "use strict";
-    
+
     var idxTask = db.root.data.arrTasks.findIndex(function (task) {
         return (task.id === idTask);
     });
-    
+
     return db.root.data.arrTasks[idxTask].arrTimeWindow.findIndex( function (TW) {
         return (TW.id === idTW);
     });
@@ -376,13 +409,13 @@ function onBack() {
             return;
         }
     }
-    
+
     /* todo: deselect task if any */
-//    if(ssGet("idHabitSelect") != undefined) {
-//        deselectHabit();
-//        return;
-//    }
-    
+    //    if(ssGet("idHabitSelect") != undefined) {
+    //        deselectHabit();
+    //        return;
+    //    }
+
     /* if not on main page, just go back to previous page */
     var page = location.href.split('/').reverse()[0];
     if (page != "index.html" && page != "index.html?") {
@@ -399,8 +432,8 @@ function oncancelAddEditTask(event) {
     "use strict";
 
     if (event.target === document.getElementById("buttonCancelAddEditTask") ||
-            event.target === document.getElementById("modalAddEditTask")
-            ) {
+        event.target === document.getElementById("modalAddEditTask")
+       ) {
         document.getElementById("modalAddEditTask").style.display = "none";
     }
 }
@@ -421,6 +454,7 @@ function oncancelEditTimer(event) {
 function onclickAddTask() {
     "use strict";
 
+    fillParentTasks();
     document.getElementById("modalAddEditTask").style.display = "block";
     document.getElementById("textTaskName").focus();
 }
@@ -493,7 +527,7 @@ function onclickStartTimer(event) {
         var idTaskRunning = db.root.data.arrTasks[idxTaskRunning].id;
         pauseTimer(idTaskRunning);
     }
-    
+
     startTimer(idTask);
 }
 
@@ -544,8 +578,12 @@ function onsubmitAddEditTask() {
     "use strict";
 
     /* add to database */
-    var idTask = db.addTask(document.getElementById("textTaskName").value);
-    
+    var name = document.getElementById("textTaskName").value;
+    var parent = document.getElementById("selParentTask").value;
+    var idPTask = null;
+    if(parent != "None") idPTask = parseInt( parent.split("_")[1] );
+    var idTask = db.addTask(name, idPTask);
+
     /* take care of the UI */
     document.getElementById("modalAddEditTask").style.display = "none";
     addEditTaskDiv(idTask);
@@ -559,14 +597,14 @@ function onsubmitEditTimer() {
     var brk = 0;
 
     start = moment(moment(SelectedDate).format("YYYY-MM-DD ") +
-        document.getElementById("textStartTime").value, "YYYY-MM-DD HH:mm:ss");
+                   document.getElementById("textStartTime").value, "YYYY-MM-DD HH:mm:ss");
 
     /* do validations except for running timer */
     if (document.getElementById("textEndTime").value !== "") {
 
         /* validation: end time should be greater than start time. ignore if end timer is null. */
         end = moment(moment(SelectedDate).format("YYYY-MM-DD ") +
-            document.getElementById("textEndTime").value, "YYYY-MM-DD HH:mm:ss");
+                     document.getElementById("textEndTime").value, "YYYY-MM-DD HH:mm:ss");
         if (end.isAfter(start)) {
             document.getElementById("textStartTime").classList.add("w3-theme-light");
             document.getElementById("textEndTime").classList.add("w3-theme-light");
@@ -675,7 +713,7 @@ function setEvents() {
                 navigator.vibrate(20);
             });
         }
-        
+
         /* back button */
         document.addEventListener("backbutton", onBack);
     }
@@ -694,7 +732,7 @@ function setStyle() {
     document.head.appendChild( style );
     style.innerText = ".mybutton:active { background-color: " + 
         getThemeColor("w3-theme-l3") + "; }";
-    
+
     /* set the z-index for all elements */
     /* benefit of puting here is you can have an overview of all the elements stack */
     document.getElementById("divHeader").style.zIndex = Z_INDEX_MED;
@@ -772,7 +810,7 @@ function updateRunningTimer() {
 
     var task = db.root.data.arrTasks[idxTask];
     var idTask = task.id;
-    
+
     /* pause the timer if it has overflown to next day */
     if (!isDateMatching(db.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].startTime, moment())) {
         pauseTimer(idTask);

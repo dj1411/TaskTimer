@@ -160,16 +160,15 @@ DB.prototype.addTask = function (name, idPTask) {
     var idTask = null;
     
     /* If no parent, then create a parent task. */
-    /* Otherwise, create a child task and append to parent. */
     if(idPTask == undefined || idPTask == null) {
         /* filling the data structure */
         idTask = base.getNextIdTask();
         var task = new ParentTask(idTask, name);
         this.root.data.arrTasks.push(task);
     }
+    /* Otherwise, create a child task and append to parent. */
     else {
-        var idxPTask = getIdxTask(idPTask);
-        idTask = this.root.data.arrTasks[idxPTask].addChildTask( name );
+        idTask = base.getTaskObj(idPTask).addChildTask( name );
     }
     
     this.save();
