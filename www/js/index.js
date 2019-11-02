@@ -65,7 +65,7 @@ function addTaskDiv(idTask) {
     /* find the array index */
     var idxTask = getIdxTask(idTask);
 
-    /* remove blank task for scroll fix */
+    /* remove blank task to scroll past (+) button */
     var divTaskBlank = document.getElementById("divTask_blank");
     if (divTaskBlank !== null) {
         document.getElementById("divBody").removeChild(divTaskBlank);
@@ -75,7 +75,8 @@ function addTaskDiv(idTask) {
     var divTask = document.createElement("div");
     document.getElementById("divBody").appendChild(divTask);
     divTask.id = "divTask_" + idTask;
-    divTask.classList.add("w3-card", "w3-margin-bottom", "w3-margin-right", "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
+    divTask.classList.add("w3-card", "w3-margin-bottom", "w3-margin-right", 
+              "w3-margin-left", "w3-round", "w3-container", "w3-theme-light");
     divTask.oncontextmenu = function (event) {
         onmenuTask(event, idTask);
     };
@@ -564,6 +565,7 @@ function pauseTimer(idTask) {
     /* add pause time to database */
     db.addPauseTime(idTask);
 }
+
 
 /* start updating any running timer from another session */
 function resumeTimer() {

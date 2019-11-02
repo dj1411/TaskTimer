@@ -227,6 +227,28 @@ DB.prototype.getNextIdTask = function () {
 }
 
 
+/* given the id of a task, return the corresponding data object. */
+/* This is useful for accessing any child object of the task. */
+DB.prototype.getTaskObj = function (idTask) {
+    var ret = null;
+    
+    this.root.data.arrTasks.forEach( function(task) {
+        if(task.id == idTask) {
+            ret = task;
+        }
+        else {
+            var ctask = task.arrChildTasks.forEach( function(ctask) {
+                if(ctask.id == idTask) {
+                    ret = ctask;
+                }
+            } );
+        }
+    } );
+    
+    return ret;
+}
+
+
 /* save entire database to file */
 DB.prototype.saveToFile = function () {
     "use strict";
