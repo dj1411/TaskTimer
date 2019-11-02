@@ -168,7 +168,8 @@ DB.prototype.addTask = function (name, idPTask) {
         this.root.data.arrTasks.push(task);
     }
     else {
-        idTask = this.root.data.arrTasks[idPTask].addChildTask( name );
+        var idxPTask = getIdxTask(idPTask);
+        idTask = this.root.data.arrTasks[idxPTask].addChildTask( name );
     }
     
     this.save();
@@ -199,6 +200,16 @@ DB.prototype.editTW = function (idTask, idTW, startTime, endTime, brk) {
     this.root.data.arrTasks[idxTask].arrTimeWindow[idxTW].breakdur = brk;
     this.save();
 };
+
+
+/* Return the parent task id fo the given child task id */
+DB.prototype.findIdPTask = function (idCTask) {
+    return this.root.data.arrTasks.find( function(task) {
+       return task.arrChildTasks.find( function(ctask) {
+           return ctask.id == idCTask;
+       });
+    }).id;
+}
 
 
 /* get the next available idTask. */
