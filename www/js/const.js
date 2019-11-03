@@ -25,7 +25,7 @@
 /* hint: magic numbers will be converted to const if its expected to be used in multiple places */
 
 const APP_NAME = "TaskTimer";
-const APP_VER = "0.0.3";
+const APP_VER = "0.0.4";
 
 const Z_INDEX_TOP = 5;
 const Z_INDEX_MED = 3;
