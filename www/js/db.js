@@ -152,26 +152,49 @@ DB.prototype.addPauseTime = function (idTask) {
     "use strict";
 
     /* find the running timer */
+    var idxPTask = null;
+    var idxCTask = null;
+    var idPTask = this.getIdPTask(idTask);
+    if(idPTask != null && idPTask != undefined && idPTask != -1) { // idTask is a child task
+        idxPTask = this.root.data.arrTasks.findIndex( function(task) {
+            return (task.id == idPTask);
+        });
+        idxCTask = this.root.data.arrTasks[idxPTask].arrChildTasks.findIndex( function(ctask) {
+            return (ctask.id == idTask);
+        });
+    }
+    else { // idTask is a parent task
+        idxPTask = this.root.data.arrTasks.findIndex( function(task) {
+            return (task.id == idTask);
+        });
+    }
     var idxTW = this.getTaskObj(idTask).arrTimeWindow.findIndex(function (tw) {
         return (tw.startTime !== null && tw.endTime === null);
     });
 
-    /* add end time */
-    var arrTW = this.getTaskObj(idTask).arrTimeWindow;
-
-    if (isDateMatching(arrTW[idxTW].startTime, moment())) {
-        arrTW[idxTW].endTime = moment();
+    /* set the end time. if timer overflow to next day, clip it till current day */
+    var startTime = this.getTaskObj(idTask).arrTimeWindow[idxTW];
+    var endTime = null;
+    if (isDateMatching(startTime, moment())) {
+        endTime = moment();
     } else {
-        var lastMoment = moment(arrTW[idxTW].startTime);
+        var lastMoment = moment(startTime);
         lastMoment.set({
             'hour': 23,
             'minute': 59,
             'second': 59,
             'millisecond': 999
         });
-        arrTW[idxTW].endTime = lastMoment;
+        endTime = lastMoment;
     }
-
+    
+    /* add the end time to time window */
+    if(idPTask != null && idPTask != undefined && idPTask != -1) { // idTask is a child task
+        this.root.data.arrTasks[idxPTask].arrChildTasks[idxCTask].arrTimeWindow[idxTW].endTime = endTime;
+    }
+    else { // idTask is a parent task
+        this.root.data.arrTasks[idxPTask].arrTimeWindow[idxTW].endTime = endTime;
+    }
     this.save();
 };
 

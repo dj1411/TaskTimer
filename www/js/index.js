@@ -321,15 +321,45 @@ function getCoordModalEditTimer(idTask) {
 }
 
 
-function getIdxTaskRunning() {
-    "use strict";
-
-    return db.root.data.arrTasks.findIndex(function (task) {
-        return !(task.arrTimeWindow.every(function (TW) {
-            return (TW.startTime !== null && TW.startTime !== undefined && TW.startTime !== "") &&
-                (TW.endTime !== null && TW.endTime !== undefined && TW.endTime !== "");
-        }));
-    });
+function getIdTaskRunning() {
+    /* todo: copy paste from update running timer. need to optimize. */
+    var idTask = null;
+    var idxTW = null;
+    for(var ip=0; ip<db.root.data.arrTasks.length; ip++) {
+        
+        var task = db.root.data.arrTasks[ip];
+        
+        /* check if time window found in parent task */
+        idxTW = task.arrTimeWindow.findIndex( function(tw) {
+            return (tw.startTime !== null && tw.endTime === null);
+        });
+        
+        /* if time window found in parent task, exit the loop */
+        if(idxTW != -1 && idxTW != null) {
+            idTask = task.id;
+            break;
+        }
+        /* otherwise, look into child tasks */
+        else {
+            for(var ic=0; ic<task.arrChildTasks.length; ic++) {
+                
+                var ctask = task.arrChildTasks[ic];
+                idxTW = ctask.arrTimeWindow.findIndex( function(tw) {
+                    return (tw.startTime !== null && tw.endTime === null);
+                });
+                if(idxTW != -1 && idxTW != null) {
+                    idTask = ctask.id;
+                    break;
+                }                
+            }
+            
+            if(idTask != null && idxTW != null && idxTW != -1) {
+                break;
+            }
+        }
+    }
+    
+    return idTask;
 }
 
 
@@ -507,11 +537,10 @@ function onclickStartTimer(event) {
     var idTask = parseInt( event.target.id.split("_")[1] );
 
     /* find any running timer and pause it */
-//    var idxTaskRunning = getIdxTaskRunning();
-//    if (-1 !== idxTaskRunning) {
-//        var idTaskRunning = db.root.data.arrTasks[idxTaskRunning].id;
-//        pauseTimer(idTaskRunning);
-//    }
+    var idTaskRunning = getIdTaskRunning();
+    if(idTaskRunning != null && idTaskRunning != undefined && idTaskRunning != -1) {
+        pauseTimer(idTaskRunning);
+    }
 
     startTimer(idTask);
 }
@@ -546,9 +575,9 @@ function onclickPauseTimer(event) {
     "use strict";
 
     /* find id of the task */
-    var id = parseInt(event.target.parentElement.parentElement.getAttribute("id").split("_")[1], 10);
+    var idTask = parseInt( event.target.id.split("_")[1] );
 
-    pauseTimer(id);
+    pauseTimer(idTask);
 }
 
 function onmenuTask(event, idTask) {
@@ -656,7 +685,7 @@ function pauseTimer(idTask) {
 }
 
 
-/* start updating any running timer from another session */
+/* start updating any running timer. called from startup. */
 function resumeTimer() {
     "use strict";
 
@@ -757,16 +786,25 @@ function showTaskDivs() {
 function showTimers() {
     "use strict";
 
-    for (var idxTask = 0; idxTask < db.root.data.arrTasks.length; idxTask++) {
-        var idTask = db.root.data.arrTasks[idxTask].id;
-
-        var durationTotal = getSpentDuration(idTask);
-        var hr = (durationTotal.hours() > 9) ? durationTotal.hours() : "0" + durationTotal.hours();
-        var min = (durationTotal.minutes() > 9) ? durationTotal.minutes() : "0" + durationTotal.minutes();
-        var sec = (durationTotal.seconds() > 9) ? durationTotal.seconds() : "0" + durationTotal.seconds();
-
-        document.getElementById("divTimer_" + idTask).innerText = hr + ":" + min + ":" + sec;
-    }
+    db.root.data.arrTasks.forEach( function(task) {
+    
+        if(task.arrChildTasks.length == 0) {
+            var durationTotal = getSpentDuration(task.id);
+            var hr = (durationTotal.hours() > 9) ? durationTotal.hours() : "0" + durationTotal.hours();
+            var min = (durationTotal.minutes() > 9) ? durationTotal.minutes() : "0" + durationTotal.minutes();
+            var sec = (durationTotal.seconds() > 9) ? durationTotal.seconds() : "0" + durationTotal.seconds();
+            document.getElementById("divTimer_" + task.id).innerText = hr + ":" + min + ":" + sec;
+        }
+        else {
+            task.arrChildTasks.forEach( function(ctask) {
+                var durationTotal = getSpentDuration(ctask.id);
+                var hr = (durationTotal.hours() > 9) ? durationTotal.hours() : "0" + durationTotal.hours();
+                var min = (durationTotal.minutes() > 9) ? durationTotal.minutes() : "0" + durationTotal.minutes();
+                var sec = (durationTotal.seconds() > 9) ? durationTotal.seconds() : "0" + durationTotal.seconds();
+                document.getElementById("divTimer_" + ctask.id).innerText = hr + ":" + min + ":" + sec;
+            });
+        }
+    });
 }
 
 /* start timer of a given task */
@@ -830,7 +868,7 @@ function updateRunningTimer() {
     
     /* pause the timer if it has overflown to next day */
     if (!isDateMatching(db.getTaskObj(idTask).arrTimeWindow[idxTW].startTime, moment())) {
-//        pauseTimer(idTask);
+        pauseTimer(idTask);
     }
 
     /* update the timer display if 'today' is selected */
