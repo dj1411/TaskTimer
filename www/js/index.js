@@ -660,15 +660,31 @@ function pauseTimer(idTask) {
 function resumeTimer() {
     "use strict";
 
-    db.root.data.arrTasks.forEach(function (task) {
-        task.arrTimeWindow.forEach(function (tw) {
-            if (null !== tw.startTime && null === tw.endTime) {
-                updateRunningTimer();
-                timerTask = setInterval(updateRunningTimer, 1000);
-                return;
-            }
-        });
+    /* check if there is a running timer */
+    var hasRunningTimer = db.root.data.arrTasks.some( function(task) {
+        /* first check in parent tasks */
+        var found = task.arrTimeWindow.some( function(tw) {
+            return (tw.startTime != null && tw.endTime == null);
+        } );
+        
+        if(found) {
+            return true;
+        }
+        else {
+            /* if not found in parent tasks, look into child tasks */
+            return task.arrChildTasks.some( function(ctask) {
+                return ctask.arrTimeWindow.some( function(ctw) {
+                    return (ctw.startTime != null && ctw.endTime == null);
+                });
+            })
+        }
     });
+    
+    if(hasRunningTimer) {
+        updateRunningTimer();
+        timerTask = setInterval(updateRunningTimer, 1000);
+    }
+    
 }
 
 
@@ -814,7 +830,7 @@ function updateRunningTimer() {
     
     /* pause the timer if it has overflown to next day */
     if (!isDateMatching(db.getTaskObj(idTask).arrTimeWindow[idxTW].startTime, moment())) {
-        pauseTimer(idTask);
+//        pauseTimer(idTask);
     }
 
     /* update the timer display if 'today' is selected */
