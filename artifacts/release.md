@@ -1,3 +1,4 @@
+- save data for previous version
 - update version number in const.js and config.xml
 - remove package.json to rebuild it.
 - during init save the database to local json file
